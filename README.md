@@ -4,6 +4,8 @@ Tregex API Link: https://nlp.stanford.edu/nlp/javadoc/javanlp/edu/stanford/nlp/t
 
 Tsurgeon API Link: https://nlp.stanford.edu/nlp/javadoc/javanlp/edu/stanford/nlp/trees/tregex/tsurgeon/Tsurgeon.html
 
+Paper talking about syntactic tree tags: http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.9.8216&rep=rep1&type=pdf
+
 Coreference Resolution Tutorial Link: https://stanfordnlp.github.io/CoreNLP/coref.html
 
 In order to run, please download stanford-corenlp-4.2.0 from this link: https://stanfordnlp.github.io/CoreNLP/
