@@ -24,3 +24,7 @@ hs_err_pid*
 
 # nlp toolkit
 stanford-corenlp-4.2.0/*
+
+# intellij files
+.idea/*
+*.iml
