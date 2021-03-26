@@ -28,3 +28,6 @@ stanford-corenlp-4.2.0/*
 # intellij files
 .idea/*
 *.iml
+
+# build files
+out/*
