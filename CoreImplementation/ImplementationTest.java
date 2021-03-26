@@ -2,18 +2,23 @@ package CoreImplementation;
 
 import edu.stanford.nlp.trees.Tree;
 
+import java.util.List;
+
 public class ImplementationTest {
     public static void main(String[] args) {
 
         boolean debug = true;
         // test document string
-        String originalString = "Alvin is a student at CMU University. He is a Master's Student!";
+        String originalString = "Alvin is a student at CMU University. He is a Master's Student! Who is Alvin's crush?";
 
         // parse sentence
         DocumentParser docParser = new DocumentParser(originalString);
 
+        // filter sentences
+        SentenceSelection selector = new SentenceSelection();
+        List<ParsedSentence> filteredSentences = selector.filter(docParser.parsedSentences);
         // output sentences for a check
-        for (ParsedSentence sentence : docParser.parsedSentences) {
+        for (ParsedSentence sentence : filteredSentences) {
             // print sentence
             sentence.print(debug);
 

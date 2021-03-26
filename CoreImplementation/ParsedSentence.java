@@ -41,7 +41,7 @@ public class ParsedSentence {
             System.out.print(" " + token);
         }
         System.out.println();
-        System.out.print("Tags:");
+        System.out.print("NER Tags:");
         for (String tag : sentenceTags) {
             System.out.print(" " + tag);
         }
