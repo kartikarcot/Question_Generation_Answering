@@ -5,6 +5,8 @@ import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.tregex.TregexMatcher;
 import edu.stanford.nlp.trees.tregex.TregexPattern;
+import edu.stanford.nlp.trees.tregex.tsurgeon.Tsurgeon;
+import edu.stanford.nlp.trees.tregex.tsurgeon.TsurgeonPattern;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +57,27 @@ public class SentenceSelection {
 			if (filtered)
 				continue;
 			// if we are here the sentence is viable for question generation
+			downcaseTheFirstToken(sentence);
 			filteredSentences.add(sentence);
 		}
 		return filteredSentences;
+	}
+
+	private ParsedSentence downcaseTheFirstToken(ParsedSentence sentence) {
+		String firstTag = sentence.sentenceTags.get(0);
+		String firstToken = sentence.sentenceTokens.get(0);
+		String firstWord = firstToken.split("-")[0];
+		if (firstTag.equals("O"))
+		{
+			// fix ner tags array
+			sentence.sentenceTokens.set(0, firstToken.toLowerCase());
+			// fix the tree as well
+			TregexPattern searchPattern = TregexPattern.compile(firstWord+"=renamedtag");
+			TsurgeonPattern p = Tsurgeon.parseOperation("relabel renamedtag "+firstWord.toLowerCase());
+			List<Tree> changedTree = Tsurgeon.processPatternOnTrees(searchPattern, p, sentence.sentenceTree);
+			sentence.sentenceTree = changedTree.get(0);
+			System.out.println("Changed tree: " + sentence.sentenceTree);
+		}
+		return sentence;
 	}
 }
