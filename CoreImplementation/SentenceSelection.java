@@ -63,7 +63,7 @@ public class SentenceSelection {
 		return filteredSentences;
 	}
 
-	private ParsedSentence downcaseTheFirstToken(ParsedSentence sentence) {
+	private void downcaseTheFirstToken(ParsedSentence sentence) {
 		String firstTag = sentence.sentenceTags.get(0);
 		String firstToken = sentence.sentenceTokens.get(0);
 		String firstWord = firstToken.split("-")[0];
@@ -78,6 +78,5 @@ public class SentenceSelection {
 			sentence.sentenceTree = changedTree.get(0);
 			System.out.println("Changed tree: " + sentence.sentenceTree);
 		}
-		return sentence;
 	}
 }
