@@ -27,9 +27,9 @@ NodePruner.java is an example module that uses the TsurgeonWrapper
 If you are implementing "Extract NER from found Noun Phrase", please note that NER tags are already generated and stored in ParsedSentence. Your job is to find the index of a noun phrase and find the associated NER tag for those indices.
 
 ## System Architecture
-![](https://ibb.co/Q6WjvF0)
-![](https://ibb.co/vz1yqkQ)
-![](https://ibb.co/df8P0sb)
+![](https://i.ibb.co/19CJGfc/76c28da2-2c42-4898-86fc-c12499b092dd.jpg)
+![](https://i.ibb.co/NYxDCKm/4267e091-3222-4d3c-8756-fafee7104a6b.jpg)
+![](https://i.ibb.co/JcDvRWx/0888fcd8-6f1e-4f2c-bc63-81ab1e034d3f.jpg)
 
 ## Useful links
 * [Penn treebank style parsing](http://www.surdeanu.info/mihai/teaching/ista555-fall13/readings/PennTreebankConstituents.html)
