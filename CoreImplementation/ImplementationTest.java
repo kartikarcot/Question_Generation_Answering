@@ -32,6 +32,12 @@ public class ImplementationTest {
                 System.out.println("Sentence with Noun Phrase Removed: " + nodePruner.resultingTree);
             }
             System.out.println("--------------------------------------------------------");
+            // Decompose predicates ?
+            // Perform tsurgeon manipulations is Bob a student at CMU?
+            // Identify NER type of Noun Phrase
+            // Choose Question type accordingly
+            // Construct final question
+            // Write to text file
         }
 
 
