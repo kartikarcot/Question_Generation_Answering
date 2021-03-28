@@ -9,11 +9,11 @@ public class ImplementationTest {
 
         boolean debug = true;
         // test document string
-        String originalString = "Alvin is a student at CMU University. He is a Master's Student!";
+        //String originalString = "Alvin is a student at CMU University. He is a Master's Student!";
 
         //load the wiki file
-        //DataLoader dataLoader = new DataLoader("D:\\Users\\Mansi Goyal\\IdeaProjects\\Question_Generation_Answering\\CoreImplementation\\Development_data\\set1\\set1\\a1.txt");
-        //String originalString = dataLoader.getText();
+        DataLoader dataLoader = new DataLoader("D:\\Users\\Mansi Goyal\\IdeaProjects\\Question_Generation_Answering\\CoreImplementation\\Development_data\\set1\\set1\\a1.txt");
+        String originalString = dataLoader.getText();
 
         // parse sentence
         DocumentParser docParser = new DocumentParser(originalString);
@@ -36,13 +36,16 @@ public class ImplementationTest {
                 System.out.println("Sentence with Noun Phrase Removed: " + nodePruner.resultingTree);
             }
             System.out.println("--------------------------------------------------------");
+
+
+        }
             // Decompose predicates ?
             // Perform tsurgeon manipulations is Bob a student at CMU?
             // Identify NER type of Noun Phrase
             // Choose Question type accordingly
             // Construct final question
             // Write to text file
-        }
+
 
 
 
