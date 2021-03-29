@@ -4,6 +4,7 @@ import edu.stanford.nlp.ling.Word;
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.process.Morphology;
 import edu.stanford.nlp.trees.CollinsHeadFinder;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.tregex.TregexMatcher;
@@ -19,8 +20,9 @@ import java.util.regex.Pattern;
 
 public class StanfordCoreNLPTest {
     public static void main(String[] args) {
-        String originalString = "Alvin is a student at CMU University.";
-
+//        String originalString = "Alvin is a student at CMU University.";
+        String originalString = "Kartik hates reading about grammar.";
+        Morphology morphology = new Morphology();
         // set up pipeline properties
         Properties props = new Properties();
         // set the list of annotators to run
@@ -162,8 +164,10 @@ public class StanfordCoreNLPTest {
             System.out.println("--------------------------");
 
             // check if the current answer phrase is the subject
-            String subjectCheckTregex = "ROOT=root < (S < NP-"+i+"|SBAR-"+i+")";
+             String subjectCheckTregex = "ROOT=root < (S < NP-"+i+"|SBAR-"+i+")";
             TregexPattern subjectCheckPattern = TregexPattern.compile(subjectCheckTregex);
+            // Kartik: I do not think this is correct. should check that tregex expression against
+            // the whole sentence and not just answerPhrase.
             TregexMatcher subjectCheckMatcher = subjectCheckPattern.matcher(answerPhrase);
             boolean isSubject = subjectCheckMatcher.find();
 
@@ -173,12 +177,24 @@ public class StanfordCoreNLPTest {
             } else {
                 // decompose predicate
                 Tree decomposePredicateTree = answerPhraseMarked.deepCopy();
+                /*
+                Kartik:
+                ROOT precedes Simple Declarative clause, which precedes a Verb Phrase which either,
+                prcedes a tensed verb that does NOT precede is | was | were etc
+                OR
+                precedes a tensed verb that does NOT precede another verb phrase
+
+                Lol so weird
+                 */
                 String predicateTregex = "ROOT < (S=mainclause < (VP=predphrase [ < (/VB.?/=tensedverb !< is|was|were|am|are|has|have|had|do|does|did) | < /VB.?/=tensedverb !< VP ]))";
                 TregexPattern predicatePattern = TregexPattern.compile(predicateTregex);
                 TregexMatcher predicateMatcher = predicatePattern.matcher(decomposePredicateTree);
                 if (predicateMatcher.find()) {
                     Tree subTree = predicateMatcher.getNode("tensedverb");
-                    String lemma = "be"; //ToDo determine lemma
+                    String tensedVerb = subTree.getChild(0).toString();
+                    String posTag = subTree.label().toString();
+			              String lemma = morphology.lemma(tensedVerb, posTag);
+			              System.out.println("Lemma: "+lemma);
                     String aux = getAuxiliarySubtree(subTree);
 
                     List<Pair<TregexPattern, TsurgeonPattern>> ops = new ArrayList<Pair<TregexPattern, TsurgeonPattern>>();

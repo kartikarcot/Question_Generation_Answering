@@ -24,6 +24,7 @@ hs_err_pid*
 
 # nlp toolkit
 stanford-corenlp-4.2.0/*
+stanford-tregex-2020-11-17/*
 
 # intellij files
 .idea/*
