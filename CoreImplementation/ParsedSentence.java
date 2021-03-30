@@ -34,7 +34,7 @@ public class ParsedSentence {
         sentenceText = sentence.text();
     }
     public ParsedSentence(CoreSentence sentence, List<String> corefResolvedSentence) {
-        System.out.println("Entering Parsed Sentence costructor");
+
         // parse the sentence into a tree
         sentenceTree = sentence.constituencyParse();
 
@@ -55,8 +55,8 @@ public class ParsedSentence {
         // store raw sentence
         sentenceText = sentence.text();
         // store corref resolved raw sentence
-        corefResolvedSentenceText = corefResolvedSentence.toString();
-        System.out.println("Exiting Parsed Sentence costructor");
+        corefResolvedSentenceText = String.join(" ", corefResolvedSentence);
+
 
     }
 

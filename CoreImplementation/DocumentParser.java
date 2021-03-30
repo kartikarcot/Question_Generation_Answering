@@ -29,11 +29,12 @@ public class DocumentParser {
         // set up pipeline properties
         Properties props = new Properties();
         // set the list of annotators to run
-        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,depparse,coref,kbp,quote");
+        //props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,depparse,coref,kbp,quote");
+        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,depparse,coref");
 
         // set a property for an annotator, in this case the coref annotator is being set to use the neural algorithm
-        //MG: Changing from neural to statistical to make the model run faster
-        props.setProperty("coref.algorithm", "statistical");
+        //MG: Options: neural, statistical
+        props.setProperty("coref.algorithm", "neural");
 
         // build pipeline
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
@@ -49,8 +50,7 @@ public class DocumentParser {
         // ToDo: Coreference Resolution
         Map<Integer, CorefChain> corefs = doc_annotations.get(CorefCoreAnnotations.CorefChainAnnotation.class);
 
-        //List<CoreMap> sentences;
-         parsedSentences = new ArrayList<ParsedSentence>();
+        parsedSentences = new ArrayList<ParsedSentence>();
 
         //Reference: https://stackoverflow.com/questions/30182138/how-to-replace-a-word-by-its-most-representative-mention-using-stanford-corenlp
         for (CoreSentence coreSentence: document.sentences()) {
@@ -74,7 +74,6 @@ public class DocumentParser {
                     CoreMap corefSentence = doc_annotations.get(CoreAnnotations.SentencesAnnotation.class).get(sentence_idx);
 
                     List<CoreLabel> corefSentenceTokens = corefSentence.get(CoreAnnotations.TokensAnnotation.class);
-                    //String newwords = "";
                     CorefChain.CorefMention reprMent = coref_chain.getRepresentativeMention();
 
                     if (token.index() <= reprMent.startIndex || token.index() >= reprMent.endIndex) {
@@ -82,8 +81,6 @@ public class DocumentParser {
                         for (int i = reprMent.startIndex; i < reprMent.endIndex; i++) {
                             CoreLabel matchedLabel = corefSentenceTokens.get(i - 1);
                             corefResolvedSentence.add(matchedLabel.word().replace("'s", ""));
-                            //System.out.println("matchedLabel : "+matchedLabel.word());
-                            //newwords += matchedLabel.word() + " ";
 
                         }
                     }

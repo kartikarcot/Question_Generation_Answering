@@ -18,7 +18,9 @@ public class ImplementationTest {
         // parse sentence
         DocumentParser docParser = new DocumentParser(originalString);
 
+
         // filter sentences
+
         SentenceSelection selector = new SentenceSelection();
         List<ParsedSentence> filteredSentences = selector.filter(docParser.parsedSentences);
         // output sentences for a check
@@ -39,6 +41,7 @@ public class ImplementationTest {
 
 
         }
+
             // Decompose predicates ?
             // Perform tsurgeon manipulations is Bob a student at CMU?
             // Identify NER type of Noun Phrase
