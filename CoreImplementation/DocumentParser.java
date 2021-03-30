@@ -31,7 +31,8 @@ public class DocumentParser {
         Properties props = new Properties();
         // set the list of annotators to run
         //props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,depparse,coref,kbp,quote");
-        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,depparse,coref");
+
+         props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,depparse,coref");
 
         // set a property for an annotator, in this case the coref annotator is being set to use the neural algorithm
         //MG: Changing from neural to statistical to make the model run faster
