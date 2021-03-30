@@ -83,10 +83,10 @@ public class DecomposePredicate {
 				tmpNode = verbLemmaMatcher.getNode("vblemma");
 				tmpNode.removeChild(0);
 				tmpNode.label().setValue("VB");
-				tmpNode.addChild(Tree.valueOf(lemma));
+				tmpNode.addChild(Tree.valueOf("("+lemma+")"));
 			}
 		}
-		System.out.println("Decomposed Predicate: " + sentenceTreeCopy);
+		System.out.println("Decomposed Predicate: " + sentenceTreeCopy.toString());
 		return sentenceTreeCopy;
 	}
 

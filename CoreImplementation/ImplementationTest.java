@@ -9,7 +9,8 @@ public class ImplementationTest {
 
 		boolean debug = true;
 		// test document string
-		String originalString = "Alvin is a student at CMU University. He is a Master's Student!";
+		// String originalString = "Alvin is a student at CMU University. He is a Master's Student! Alvin wanted to play";
+		String originalString = "Alvin wanted to play";
 
 		//load the wiki file
 		//DataLoader dataLoader = new DataLoader("D:\\Users\\Mansi Goyal\\IdeaProjects\\Question_Generation_Answering\\CoreImplementation\\Development_data\\set1\\set1\\a1.txt");
