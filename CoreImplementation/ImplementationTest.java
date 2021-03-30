@@ -10,7 +10,7 @@ public class ImplementationTest {
 		boolean debug = true;
 		// test document string
 		// String originalString = "Alvin is a student at CMU University. He is a Master's Student! Alvin wanted to play";
-		String originalString = "Alvin wanted to play";
+		String originalString = "Alvin wanted to play. Alvin is walking his dog.";
 
 		//load the wiki file
 		//DataLoader dataLoader = new DataLoader("D:\\Users\\Mansi Goyal\\IdeaProjects\\Question_Generation_Answering\\CoreImplementation\\Development_data\\set1\\set1\\a1.txt");
@@ -25,6 +25,10 @@ public class ImplementationTest {
 
 		// Object for decomposing predicates
 		DecomposePredicate decomposer = new DecomposePredicate();
+
+		// Object for inverting predicates
+		SubjectAuxillaryInversion invertor = new SubjectAuxillaryInversion();
+
 		// output sentences for a check
 		for (ParsedSentence sentence : filteredSentences) {
 			// print sentence
@@ -42,7 +46,8 @@ public class ImplementationTest {
 			System.out.println("--------------------------------------------------------");
 			// Decompose predicates
 			Tree decomposedTree = decomposer.decomposePredicate(sentence.sentenceTree);
-			// Perform tsurgeon manipulations is Bob a student at CMU?
+			// Perform tsurgeon manipulations is Bob a student at CMU (subject auxillary inversion)
+			Tree subAuxInverted = invertor.invertSubjectAuxillary(decomposedTree);
 			// Identify NER type of Noun Phrase
 			// Choose Question type accordingly
 			// Construct final question
