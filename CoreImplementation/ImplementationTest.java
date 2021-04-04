@@ -1,7 +1,9 @@
 package CoreImplementation;
 
+import edu.stanford.nlp.ling.Label;
 import edu.stanford.nlp.trees.Tree;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ImplementationTest {
@@ -34,7 +36,7 @@ public class ImplementationTest {
 		GenerateQuestion generator = new GenerateQuestion();
 		// Post process the final question
 		PostProcessQuestion postprocesser = new PostProcessQuestion();
-
+		List<String> questions = new ArrayList<>();
 		// output sentences for a check
 		for (ParsedSentence sentence : filteredSentences) {
 			// print sentence
@@ -73,7 +75,17 @@ public class ImplementationTest {
 				System.out.println("Text with relabeled main clause " + mainClauseRelabeledTree.toString());
 
 				// generate question
-				List<Tree> questionTrees = generator.generateQuestions(mainClauseRelabeledTree, index);
+				List<Tree> questionTrees = generator.generateQuestions(mainClauseRelabeledTree,
+												index, sentence.sentenceTags, sentence.sentenceTokens);
+
+				for (Tree questionTree : questionTrees) {
+					String question = "";
+					List<Label> questionYield = questionTree.yield();
+					for (Label leave : questionYield) {
+						question+=leave.value()+ " ";
+					}
+					questions.add(question);
+				}
 				// Identify NER type of Noun Phrase and Choose Question type accordingly and insert it in the beginning
 				// Post process the final question
 				postprocesser.postProcessQuestion(mainClauseRelabeledTree);
@@ -83,6 +95,11 @@ public class ImplementationTest {
 
 
 			// Write to text file
+		}
+
+		System.out.println("************* Final Questions ***************");
+		for (String q : questions) {
+			System.out.println(q);
 		}
 	}
 }
