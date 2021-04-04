@@ -33,7 +33,7 @@ public class TsurgeonWrapper {
 
         TregexPattern tregexPattern = TregexPattern.compile(pattern);
         operationList.add(new Pair<>(tregexPattern, collectedTsurgeonPattern));
-        System.out.println("verify: "+ resultingTree);
+        //System.out.println("verify: "+ resultingTree);
         Tsurgeon.processPatternsOnTree(operationList, resultingTree);
     }
 }
