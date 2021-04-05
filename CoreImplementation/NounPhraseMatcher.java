@@ -9,7 +9,7 @@ public class NounPhraseMatcher {
     public static final String PATTERN =
             "NP=nounphrase";
 
-    public Tree resultingTree;
+    public Tree treeWithNounPhrasesMarked;
     public List<Tree> resultingNodes;
 
     public NounPhraseMatcher(Tree sentenceTree) {
@@ -18,11 +18,11 @@ public class NounPhraseMatcher {
 
     public void initialize(Tree sentenceTree) {
         // deep copy so that the input tree is not altered
-        resultingTree = sentenceTree.deepCopy();
+        treeWithNounPhrasesMarked = sentenceTree.deepCopy();
 
         // initialize matcher
         // note TregexMatcherWrapper operates inplace for the tree
-        TregexMatcherWrapper matcher = new TregexMatcherWrapper(PATTERN, resultingTree);
+        TregexMatcherWrapper matcher = new TregexMatcherWrapper(PATTERN, treeWithNounPhrasesMarked);
 
         // find the matched patterns
         resultingNodes = new ArrayList<>();
@@ -32,7 +32,7 @@ public class NounPhraseMatcher {
             Tree node = matcher.matcher.getNode("nounphrase");
 
             // mark the NP's with their indices
-            node.label().setValue("nounphrase"+(counter++));
+            node.label().setValue(node.label().toString()+Integer.toString(counter++));
 
             resultingNodes.add(node);
         }
