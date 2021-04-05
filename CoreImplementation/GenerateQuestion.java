@@ -14,12 +14,15 @@ public class GenerateQuestion {
 	sentenceTree: (Tree) This will be a tree with subject and auxillary inverted and S relabeled as SQ
 	nounPhraseIdx: (Integer) This will be the index of the noun phrase to change
 	 */
-	public List<Tree> generateQuestions(Tree sentenceTree, Integer nounPhraseIdx, List<String> nerTags, List<String> sentenceTokens) {
+	public List<Tree> generateQuestions(Tree sentenceTree, Integer nounPhraseIdx, List<String> nerTags, List<String> sentenceTokens, boolean mainClauseSubject) {
 		// container for all possible questions generated
 		List<Tree> questionTrees = new ArrayList<>();
 
 		// regex for selecting the required nounphrase
 		String answerPhraseExtractTregex = "ROOT=root < (SQ=qclause << /^(NP|PP|SBAR)"+Integer.toString(nounPhraseIdx)+"$/=answer < VP=predicate)";
+		if (mainClauseSubject) {
+			answerPhraseExtractTregex = "ROOT=root < (S=qclause << mainclausesub=answer < VP=predicate)";
+		}
 		TregexPattern answerPhraseExtractPattern = TregexPattern.compile(answerPhraseExtractTregex);
 		TregexMatcher answerPhraseExtractMatcher = answerPhraseExtractPattern.matcher(sentenceTree);
 		answerPhraseExtractMatcher.find();
@@ -126,7 +129,7 @@ public class GenerateQuestion {
 				return nerTags.get(i);
 			}
 		}
-		return null;
+		return "O";
 	}
 
 	private String determineQuestionType(String nerTag) {
