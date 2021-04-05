@@ -72,11 +72,13 @@ public class SentenceSelection {
 			// fix ner tags array
 			sentence.sentenceTokens.set(0, firstToken.toLowerCase());
 			// fix the tree as well
-			TregexPattern searchPattern = TregexPattern.compile(firstWord+"=renamedtag");
-			TsurgeonPattern p = Tsurgeon.parseOperation("relabel renamedtag "+firstWord.toLowerCase());
-			List<Tree> changedTree = Tsurgeon.processPatternOnTrees(searchPattern, p, sentence.sentenceTree);
-			sentence.sentenceTree = changedTree.get(0);
-			System.out.println("Changed tree: " + sentence.sentenceTree);
+			try {
+				TregexPattern searchPattern = TregexPattern.compile(firstWord + "=renamedtag");
+				TsurgeonPattern p = Tsurgeon.parseOperation("relabel renamedtag " + firstWord.toLowerCase());
+				List<Tree> changedTree = Tsurgeon.processPatternOnTrees(searchPattern, p, sentence.sentenceTree);
+				sentence.sentenceTree = changedTree.get(0);
+			} catch (Exception e) {}
+			//System.out.println("Changed tree: " + sentence.sentenceTree);
 		}
 	}
 }

@@ -78,7 +78,9 @@ public class StanfordCoreNLPTest {
                 "ROOT=root << (SBAR=unmovable !< WHNP < (/^[^S].*/ !<< that|whether|how))",
                 "ROOT=root << (NP=unmovable < EX)",
                 "ROOT=root << (/^S/ < `` << NP|ADJP|VP|ADVP|PP=unmovable)",
-                "ROOT=root << (PP=unmovable !< /.*NP/)"
+                "ROOT=root << (PP=unmovable !< /.*NP/)",
+                "ROOT=root << (NP|PP|ADJP|ADVP|PP << (NP|ADJP|VP|ADVP=unmovable))",
+                "ROOT=root << (@UNMOVABLE << NP|ADJP|VP|ADVP|PP=unmovable)"
         };
 
         // ToDo: check the validity of the sentence

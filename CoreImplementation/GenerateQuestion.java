@@ -18,20 +18,40 @@ public class GenerateQuestion {
 		// container for all possible questions generated
 		List<Tree> questionTrees = new ArrayList<>();
 
+		// remove , after PP
+		String ppCommaTregex = "PP"+nounPhraseIdx+"$+ /,/=tobepruned";
+		String operation = "prune tobepruned";
+		List<String> operations = new ArrayList<>();
+		operations.add(operation);
+
+		// tsurgeon operations
+		// Note: tsurgeon wrapper operates in place
+		Tree sentenceTreeCopied = sentenceTree.deepCopy();
+		TsurgeonWrapper tsurgeon = new TsurgeonWrapper(sentenceTreeCopied, ppCommaTregex, operations);
+
+		// pull up the preposition from PP
+		String ppPreposition = "@/NP/ < (PP"+nounPhraseIdx+"=prepositionalPhrase < IN=preposition)";
+		String mvOperation = "move preposition $+ prepositionalPhrase";
+		operations = new ArrayList<>();
+		operations.add(mvOperation);
+		tsurgeon = new TsurgeonWrapper(tsurgeon.resultingTree, ppPreposition, operations);
+
+		Tree processedSentenceTree = tsurgeon.resultingTree;
 		// regex for selecting the required nounphrase
-		String answerPhraseExtractTregex = "ROOT=root < (SQ=qclause << /^(NP|PP|SBAR)"+Integer.toString(nounPhraseIdx)+"$/=answer < VP=predicate)";
+		String answerPhraseExtractTregex = "ROOT=root < (SQ=qclause << /^(NP|PP|SBAR)"+nounPhraseIdx+"$/=answer < VP=predicate)";
 		if (mainClauseSubject) {
-			answerPhraseExtractTregex = "ROOT=root < (S=qclause << mainclausesub=answer < VP=predicate)";
+			answerPhraseExtractTregex = "ROOT=root < (S=qclause << mainclausesub=answer)";
 		}
 		TregexPattern answerPhraseExtractPattern = TregexPattern.compile(answerPhraseExtractTregex);
-		TregexMatcher answerPhraseExtractMatcher = answerPhraseExtractPattern.matcher(sentenceTree);
+		TregexMatcher answerPhraseExtractMatcher = answerPhraseExtractPattern.matcher(processedSentenceTree);
 		answerPhraseExtractMatcher.find();
 
 		Tree phraseToMove = answerPhraseExtractMatcher.getNode("answer");
-		System.out.println("----- Phrase to Move ------");
+		/*System.out.println("----- Phrase to Move ------");
 		System.out.println(phraseToMove);
-		System.out.println("---------------------------");
+		System.out.println("---------------------------");*/
 
+		if (phraseToMove == null) return questionTrees;
 		// phrase answer
 		List<Label> answerTokensLabel = phraseToMove.yield();
 		List<String> answerTokens = new ArrayList<>();
@@ -57,7 +77,7 @@ public class GenerateQuestion {
 			}
 		}
 		String finalTag = determineNERtag(tags);
-		System.out.println("-------- NER Tag ----------");
+		/*System.out.println("-------- NER Tag ----------");
 		for (String noun : answerTokens) {
 			System.out.print(noun + " ");
 		}
@@ -67,22 +87,29 @@ public class GenerateQuestion {
 		}
 		System.out.println();
 		System.out.println("Final Tag: "+ finalTag);
-		System.out.println("---------------------------");
+		System.out.println("---------------------------");*/
 
 
 		if (finalTag == null) return questionTrees;
 		String questionType = determineQuestionType(finalTag);
-		System.out.println("Before Question Gen: "+sentenceTree);
+		//System.out.println("Before Question Gen: "+processedSentenceTree);
+
+		// remove useless Subordinate clause
+		RemoveUselessPredicate removeUselessPredicate = new RemoveUselessPredicate(processedSentenceTree);
+
+		// remove the noun phrase comma
 
 		// remove the noun phrase
-		Tree newTree = sentenceTree.deepCopy();
+		Tree newTree = removeUselessPredicate.resultingTree.deepCopy();
 		String pruneOperation = "prune answer";
+		//String pruneOperation2 = "prune adjacentcomma";
 		String addQuestionType = "insert (QUES "+questionType+") >0 qclause";
-		List<String> operations = new ArrayList<>();
+		operations = new ArrayList<>();
+		//operations.add(pruneOperation2);
 		operations.add(pruneOperation);
 		operations.add(addQuestionType);
-		TsurgeonWrapper tsurgeon = new TsurgeonWrapper(newTree, answerPhraseExtractTregex, operations);
-		System.out.println("After Question Gen: "+newTree);
+		tsurgeon = new TsurgeonWrapper(newTree, answerPhraseExtractTregex, operations);
+		//System.out.println("After Question Gen: "+newTree);
 		questionTrees.add(newTree);
 		return questionTrees;
 		// extract the noun phrase out of the prepositional phrase
@@ -137,6 +164,8 @@ public class GenerateQuestion {
 			return "Who";
 		} else if (nerTag.equals("ORGANIZATION")) {
 			return "Where";
+		} else if (nerTag.equals("DATE")) {
+			return "When";
 		} else {
 			return "What";
 		}
