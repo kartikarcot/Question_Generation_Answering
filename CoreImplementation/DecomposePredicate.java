@@ -119,7 +119,7 @@ public class DecomposePredicate {
 	}
 
 	private String extractLemma(String verbForm, String posTag) {
-		// functtion can be removed if no more processing is required.
+		// function can be removed if no more processing is required.
 		return morphology.lemma(verbForm, posTag);
 	}
 }

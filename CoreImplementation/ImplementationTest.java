@@ -15,7 +15,8 @@ public class ImplementationTest {
 		// test document string
 
 		// String originalString = "Alvin is a student at CMU University. He is a Master's Student! Alvin wanted to play";
-		String originalString = "Alvin wanted to play. Alvin is walking his dog. Students need a break. Karthik is sad.";
+		String originalString = "Alvin wanted to play. He is walking his dog. Students need a break. Karthik is sad. He loves NLP.";
+
 		//load the wiki file
 		//DataLoader dataLoader = new DataLoader("D:\\Users\\Mansi Goyal\\IdeaProjects\\Question_Generation_Answering\\CoreImplementation\\Development_data\\set1\\set1\\a1.txt");
 		//String originalString = dataLoader.getText();
