@@ -19,6 +19,7 @@ public class GenerateQuestion {
 		List<Tree> questionTrees = new ArrayList<>();
 
 		// remove , after PP
+		// Eg: In 2000, Kartik walked on earth
 		String ppCommaTregex = "PP"+nounPhraseIdx+"$+ /,/=tobepruned";
 		String operation = "prune tobepruned";
 		List<String> operations = new ArrayList<>();
@@ -30,6 +31,8 @@ public class GenerateQuestion {
 		TsurgeonWrapper tsurgeon = new TsurgeonWrapper(sentenceTreeCopied, ppCommaTregex, operations);
 
 		// pull up the preposition from PP
+		// Eg Kartik is a group of cells.
+		// What is Kartik a group of
 		String ppPreposition = "@/NP/ < (PP"+nounPhraseIdx+"=prepositionalPhrase < IN=preposition)";
 		String mvOperation = "move preposition $+ prepositionalPhrase";
 		operations = new ArrayList<>();
@@ -92,25 +95,28 @@ public class GenerateQuestion {
 
 		if (finalTag == null) return questionTrees;
 		String questionType = determineQuestionType(finalTag);
-		//System.out.println("Before Question Gen: "+processedSentenceTree);
+		// Question type will return null if the nertag was "0". Don't form questions about this.
+		if (questionType != null) {
+			//System.out.println("Before Question Gen: "+processedSentenceTree);
 
-		// remove useless Subordinate clause
-		RemoveUselessPredicate removeUselessPredicate = new RemoveUselessPredicate(processedSentenceTree);
+			// remove useless Subordinate clause
+			RemoveUselessPredicate removeUselessPredicate = new RemoveUselessPredicate(processedSentenceTree);
 
-		// remove the noun phrase comma
+			// remove the noun phrase comma
 
-		// remove the noun phrase
-		Tree newTree = removeUselessPredicate.resultingTree.deepCopy();
-		String pruneOperation = "prune answer";
-		//String pruneOperation2 = "prune adjacentcomma";
-		String addQuestionType = "insert (QUES "+questionType+") >0 qclause";
-		operations = new ArrayList<>();
-		//operations.add(pruneOperation2);
-		operations.add(pruneOperation);
-		operations.add(addQuestionType);
-		tsurgeon = new TsurgeonWrapper(newTree, answerPhraseExtractTregex, operations);
-		//System.out.println("After Question Gen: "+newTree);
-		questionTrees.add(newTree);
+			// remove the noun phrase
+			Tree newTree = removeUselessPredicate.resultingTree.deepCopy();
+			String pruneOperation = "prune answer";
+			//String pruneOperation2 = "prune adjacentcomma";
+			String addQuestionType = "insert (QUES " + questionType + ") >0 qclause";
+			operations = new ArrayList<>();
+			//operations.add(pruneOperation2);
+			operations.add(pruneOperation);
+			operations.add(addQuestionType);
+			tsurgeon = new TsurgeonWrapper(newTree, answerPhraseExtractTregex, operations);
+			//System.out.println("After Question Gen: "+newTree);
+			questionTrees.add(newTree);
+		}
 		return questionTrees;
 		// extract the noun phrase out of the prepositional phrase
 		/*String extractionTregex = "PP !>> NP ?< RB|ADVP=adverb [< (IN|TO=preposition !$ IN) | < (IN=preposition $ IN=preposition2)] < NP=object";
@@ -160,7 +166,10 @@ public class GenerateQuestion {
 	}
 
 	private String determineQuestionType(String nerTag) {
-		if (nerTag.equals("PERSON")) {
+		if (nerTag.equals("O")) {
+			return null;
+		}
+		else if (nerTag.equals("PERSON")) {
 			return "Who";
 		} else if (nerTag.equals("ORGANIZATION")) {
 			return "Where";
