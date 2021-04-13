@@ -55,6 +55,14 @@ public class GenerateQuestion {
 		System.out.println("---------------------------");*/
 
 		if (phraseToMove == null) return questionTrees;
+
+		Tree preposition = null;
+		if (!mainClauseSubject && phraseToMove.value().matches("PP.*")) {
+			Label label = phraseToMove.yield().get(0);
+			System.out.println("Label value: " + label.value());
+			preposition = phraseToMove.getChild(0);
+		}
+
 		// phrase answer
 		List<Label> answerTokensLabel = phraseToMove.yield();
 		List<String> answerTokens = new ArrayList<>();
@@ -115,6 +123,11 @@ public class GenerateQuestion {
 			operations.add(addQuestionType);
 			tsurgeon = new TsurgeonWrapper(newTree, answerPhraseExtractTregex, operations);
 			//System.out.println("After Question Gen: "+newTree);
+			// if preposition exists then add it
+			if (preposition != null) {
+				Tree sqTree = newTree.getChild(0);
+				sqTree.addChild(sqTree.children().length-1, preposition);
+			}
 			questionTrees.add(newTree);
 		}
 		return questionTrees;
