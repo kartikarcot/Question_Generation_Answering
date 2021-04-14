@@ -59,6 +59,14 @@ public class GenerateQuestion {
 
 		if (phraseToMove == null) return questionTrees;
 
+		Tree preposition = null;
+		if (!mainClauseSubject && phraseToMove.value().matches("PP.*")) {
+			Label label = phraseToMove.yield().get(0);
+			System.out.println("Label value: " + label.value());
+			preposition = phraseToMove.getChild(0);
+			System.out.println("Preposition: "+preposition);
+		}
+
 		// if phraseToMove is not an NP, take it as the first NP child
 		String npLabel = phraseToMove.label().toString();
 		if (!npLabel.contains("NP")) {
@@ -79,13 +87,7 @@ public class GenerateQuestion {
 		}
 
 
-		Tree preposition = null;
-		if (!mainClauseSubject && phraseToMove.value().matches("PP.*")) {
-			Label label = phraseToMove.yield().get(0);
-			System.out.println("Label value: " + label.value());
-			preposition = phraseToMove.getChild(0);
-			System.out.println("Preposition: "+preposition);
-		}
+
 
 		// phrase answer
 		List<Label> answerTokensLabel = phraseToMove.yield();
