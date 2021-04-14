@@ -5,9 +5,9 @@ import edu.stanford.nlp.trees.Tree;
 public class MainClauseMatcher {
 
     public static final String PATTERN1 =
-            "ROOT < (S <, (NP|SBAR=mainclausesub . (VP=mainclauseverbphrase  <<, VB|VBZ|VBD|VBG|VBN|VBP|VBZ=mainclauseverb)))";
+            "ROOT < (S <, (NP|SBAR=mainclausesub . (VP=mainclauseverbphrase  << VB|VBZ|VBD|VBG|VBN|VBP|VBZ=mainclauseverb)))";
     public static final String PATTERN2 =
-            "ROOT < (S <, (PP $+ (/,/ $+ (NP|SBAR=mainclausesub . (VP=mainclauseverbphrase  <<, VB|VBZ|VBD|VBG|VBN|VBP|VBZ=mainclauseverb)))))";
+            "ROOT < (S <, (PP $+ (/,/ $+ (NP|SBAR=mainclausesub . (VP=mainclauseverbphrase  << VB|VBZ|VBD|VBG|VBN|VBP|VBZ=mainclauseverb)))))";
 
     public Tree resultingTree;
     public Tree resultingSubject;
