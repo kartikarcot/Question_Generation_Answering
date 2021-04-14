@@ -18,6 +18,9 @@ public class GenerateQuestion {
 		// container for all possible questions generated
 		List<Tree> questionTrees = new ArrayList<>();
 
+		// remove As such
+		//String
+
 		// remove , after PP
 		// Eg: In 2000, Kartik walked on earth
 		String ppCommaTregex = "PP"+nounPhraseIdx+"$+ /,/=tobepruned";
@@ -56,11 +59,32 @@ public class GenerateQuestion {
 
 		if (phraseToMove == null) return questionTrees;
 
+		// if phraseToMove is not an NP, take it as the first NP child
+		String npLabel = phraseToMove.label().toString();
+		if (!npLabel.contains("NP")) {
+			System.out.println("Label: "+phraseToMove.label());
+			String findNPPattern = npLabel+" << NP=toreplace";
+			TregexMatcherWrapper matcher = new TregexMatcherWrapper(findNPPattern, sentenceTreeCopied);
+			if (matcher.matcher.find()) {
+				phraseToMove = matcher.matcher.getNode("toreplace");
+			} else {
+				return questionTrees;
+			}
+		} else {
+			String findCommaPattern = npLabel + " << (NP=tobereplace . /,/)";
+			TregexMatcherWrapper commaMatcher = new TregexMatcherWrapper(findCommaPattern, sentenceTreeCopied);
+			if (commaMatcher.matcher.find()) {
+				phraseToMove = commaMatcher.matcher.getNode("tobereplace");
+			}
+		}
+
+
 		Tree preposition = null;
 		if (!mainClauseSubject && phraseToMove.value().matches("PP.*")) {
 			Label label = phraseToMove.yield().get(0);
 			System.out.println("Label value: " + label.value());
 			preposition = phraseToMove.getChild(0);
+			System.out.println("Preposition: "+preposition);
 		}
 
 		// phrase answer
@@ -116,7 +140,7 @@ public class GenerateQuestion {
 			Tree newTree = removeUselessPredicate.resultingTree.deepCopy();
 			String pruneOperation = "prune answer";
 			//String pruneOperation2 = "prune adjacentcomma";
-			String addQuestionType = "insert (QUES " + questionType + ") >0 qclause";
+			String addQuestionType = "insert " + questionType + " >0 qclause";
 			operations = new ArrayList<>();
 			//operations.add(pruneOperation2);
 			operations.add(pruneOperation);
@@ -183,13 +207,15 @@ public class GenerateQuestion {
 			return null;
 		}
 		else if (nerTag.equals("PERSON")) {
-			return "Who";
+			return "(Ques Who)";
 		} else if (nerTag.equals("ORGANIZATION")) {
-			return "Where";
+			return "(Ques Where)";
 		} else if (nerTag.equals("DATE")) {
-			return "When";
+			return "(Ques When)";
+		} else if (nerTag.equals("DURATION")) {
+			return "(Ques (SubQ How) (SubQ long))";
 		} else {
-			return "What";
+			return "(Ques What)";
 		}
 	}
 

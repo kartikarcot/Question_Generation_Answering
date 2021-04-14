@@ -17,8 +17,8 @@ public class ImplementationTest {
 		// String originalString = "Alvin is a student at CMU University. He is a Master's Student! Alvin wanted to play";
 		//String originalString = "Alvin wanted to play. Alvin is walking his dog. Students need a break. Karthik is sad.";
 		//load the wiki file
-		//DataLoader dataLoader = new DataLoader("a1.txt");
-		//String originalString = dataLoader.getText();
+		DataLoader dataLoader = new DataLoader("a1.txt");
+		String originalString = dataLoader.getText();
 		//String originalString = "The term \"domestic dog\" is generally used for both domesticated and feral varieties.";
 		//String originalString = "An adult female is a bitch.";
 		//String originalString = "An adult male capable of reproduction is a stud.";
@@ -31,7 +31,9 @@ public class ImplementationTest {
 //				"In 1928, the International Astronomical Union (IAU) ratified and recognized 88 modern constellations, with contiguous boundaries defined by right ascension and declination. Therefore, any given point in a celestial coordinate system lies in one of the modern constellations. Some astronomical naming systems give the constellation where a given celestial object is found along with a designation in order to convey an approximate idea of its location in the sky. e.g. The Flamsteed designation for bright stars consists of a number and the genitive form of the constellation name.\n" +
 //				"Another type of smaller popular patterns or groupings of stars are called asterisms, and differ from the modern or former constellations by being areas with identifiable shapes or features that can be used by novice observers learning to navigate the night sky. Such asterisms often refer to several stars within a constellation or may share boundaries with several constellations. Examples of asterisms include: The Pleiades and The Hyades within the constellation of Taurus, the False Cross crossing the southern constellations of both Carina and Vela, or Venus' Mirror in the constellation of Orion.";
 //		String originalString = "Twelve important constellations are assigned to the zodiac, where the Sun, Moon, and planets all follow the ecliptic.";
-		String originalString = "As such, different cultures and countries often adopted their own set of constellations outlines, some that persisted into the early 20th Century.";
+		//String originalString = "As such, different cultures and countries often adopted their own set of constellations outlines, some that persisted into the early 20th Century.";
+		//String originalString = "As the protagonist of the Pokémon anime, Ash has appeared in all episodes of the anime, all the films and several of the television specials.\n" +
+		//		"Due to the huge popularity, success, and longevity of the Pokémon anime series around the world since its debut, Ash has gone on to become one of the most well-known and recognizable animated characters of all-time (due to his status as the protagonist of the Pokémon anime), though is often overshadowed in representation by the almost universally identifiable franchise mascot, Pikachu.";
 		// parse sentence
 		DocumentParser docParser = new DocumentParser(originalString);
 
@@ -69,7 +71,6 @@ public class ImplementationTest {
 			System.out.println("------------------- Main Clause Matcher -----------------");
 			MainClauseMatcher mainMatcher = new MainClauseMatcher(markUnmovable.resultingTree);
 
-
 			System.out.println("Subject: "+mainMatcher.resultingSubject);
 			//System.out.println("Verb: "+mainMatcher.resultingVerb+", "+mainMatcher.resultingVerbTag);
 			//System.out.println("Before: "+mainMatcher.resultingTree);
@@ -78,6 +79,10 @@ public class ImplementationTest {
 				//MainSubjectVerbTense verbTense = new MainSubjectVerbTense(labeledTree, mainMatcher.resultingVerb, mainMatcher.resultingVerbTag);
 				//System.out.print("After: ");
 				//System.out.println(verbTense.resultingTree);
+
+				// remove leading phrases
+				RemoveLeadingPhrases removeLeadingPhrases = new RemoveLeadingPhrases(labeledTree);
+				labeledTree = removeLeadingPhrases.resultingTree;
 
 				// generate question
 				List<Tree> questionTrees = generator.generateQuestions(labeledTree,
@@ -108,6 +113,11 @@ public class ImplementationTest {
 			//System.out.println(nounPhrase.treeWithNounPhrasesMarked);
 
 			nounPhrase.treeWithNounPhrasesMarked = MarkUnmovable.removeUnmovable(nounPhrase.treeWithNounPhrasesMarked);
+
+			// remove leading phrases
+			RemoveLeadingPhrases removeLeadingPhrases = new RemoveLeadingPhrases(nounPhrase.treeWithNounPhrasesMarked);
+			Tree labeledTree = removeLeadingPhrases.resultingTree;
+
 			// generate a question for each marked nounphrase
 			Integer index = 0;
 			for (Tree np : nounPhrase.resultingNodes) {
@@ -117,7 +127,7 @@ public class ImplementationTest {
 
 				Tree decomposedPredicateTree = null;
 				// Decompose predicates
-				decomposedPredicateTree = decomposer.decomposePredicate(nounPhrase.treeWithNounPhrasesMarked);
+				decomposedPredicateTree = decomposer.decomposePredicate(labeledTree);
 
 				// Perform tsurgeon manipulations is Bob a student at CMU (subject auxillary inversion)
 				Tree subAuxInverted = invertor.invertSubjectAuxillary(decomposedPredicateTree);

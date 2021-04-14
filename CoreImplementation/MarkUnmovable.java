@@ -6,6 +6,8 @@ import edu.stanford.nlp.trees.tregex.TregexPattern;
 
 public class MarkUnmovable {
     String[] unmovablePhrases = new String[] {
+            "ROOT=root << (PP $+ PP=unmovable)",
+            "ROOT=root << (PP=unmovable $+ UNMOVABLE-PP)",
             "ROOT=root << (VP < (S=unmovable $,, /,/))",
             //"ROOT=root < (S < PP|ADJP|ADVP|S|SBAR=unmovable)",
             "ROOT=root << (/\\.*/ < CC << NP|ADJP|VP|ADVP|PP=unmovable)",
