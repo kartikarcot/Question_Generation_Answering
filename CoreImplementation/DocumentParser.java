@@ -21,6 +21,10 @@ public class DocumentParser {
     CoreDocument document;
     List<ParsedSentence> parsedSentences;
 
+    //Added this if we want to keep a track of the original document pre-coref
+    CoreDocument originalDocument;
+    List<ParsedSentence> originalParsedSentences;
+
     public DocumentParser(String documentStr) {
         initialize(documentStr);
     }
@@ -35,7 +39,7 @@ public class DocumentParser {
 
         // set a property for an annotator, in this case the coref annotator is being set to use the neural algorithm
         //MG: Options: neural, statistical
-        props.setProperty("coref.algorithm", "neural");
+        props.setProperty("coref.algorithm", "statistical");
 
         props.setProperty("ner.combinationMode", "HIGH_RECALL");
 
@@ -43,20 +47,22 @@ public class DocumentParser {
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
         System.out.println("Built Stanford CoreNLP Pipeline.");
 
-        document = new CoreDocument(documentStr);
+        originalDocument  = new CoreDocument(documentStr);
         System.out.println("Annotating the document");
-        pipeline.annotate(document);
+        pipeline.annotate(originalDocument);
 
-        Annotation doc_annotations = document.annotation();
+        Annotation doc_annotations = originalDocument.annotation();
 
 
         // ToDo: Coreference Resolution
         Map<Integer, CorefChain> corefs = doc_annotations.get(CorefCoreAnnotations.CorefChainAnnotation.class);
 
-        parsedSentences = new ArrayList<ParsedSentence>();
+        originalParsedSentences = new ArrayList<ParsedSentence>();
+
+        StringBuilder corefResolvedSentenceDocument = new StringBuilder();
 
         //Reference: https://stackoverflow.com/questions/30182138/how-to-replace-a-word-by-its-most-representative-mention-using-stanford-corenlp
-        for (CoreSentence coreSentence: document.sentences()) {
+        for (CoreSentence coreSentence: originalDocument.sentences()) {
 
             CoreMap sentence = coreSentence.coreMap();
 
@@ -105,8 +111,20 @@ public class DocumentParser {
 
             }
             ParsedSentence parsedObj = new ParsedSentence(coreSentence, corefResolvedSentence);
-            parsedSentences.add(parsedObj);
-            System.out.println(parsedObj.corefResolvedSentenceText);
+            originalParsedSentences.add(parsedObj);
+            //System.out.println(parsedObj.corefResolvedSentenceText);
+            corefResolvedSentenceDocument.append(" "+parsedObj.corefResolvedSentenceText);
+        }
+
+     //Added to annotate the coref resolved document
+        System.out.println(corefResolvedSentenceDocument.toString());
+        document  = new CoreDocument(corefResolvedSentenceDocument.toString());
+        System.out.println("Annotating the coref resolved document");
+        pipeline.annotate(document);
+
+        parsedSentences = new ArrayList<>();
+        for (CoreSentence sentence : document.sentences()) {
+            parsedSentences.add(new ParsedSentence(sentence));
         }
 
 
