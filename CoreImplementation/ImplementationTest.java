@@ -34,6 +34,9 @@ public class ImplementationTest {
 		//String originalString = "As such, different cultures and countries often adopted their own set of constellations outlines, some that persisted into the early 20th Century.";
 		//String originalString = "As the protagonist of the Pokémon anime, Ash has appeared in all episodes of the anime, all the films and several of the television specials.\n" +
 		//		"Due to the huge popularity, success, and longevity of the Pokémon anime series around the world since its debut, Ash has gone on to become one of the most well-known and recognizable animated characters of all-time (due to his status as the protagonist of the Pokémon anime), though is often overshadowed in representation by the almost universally identifiable franchise mascot, Pikachu.";
+		//String originalString = "The classical Zodiac is a product of a revision of the Old Babylonian system in later Neo-Babylonian astronomy 6th century BC.";
+		//String originalString = "Greek astronomy essentially adopted the older Babylonian system in the Hellenistic era, first introduced to Greece by Eudoxus of Cnidus in the 4th century BC.";
+		//String originalString = "It was only in 1930 that Eugene Delporte, the Belgian astronomer created an authoritative map demarcating the areas of sky under different constellations.";
 		// parse sentence
 		DocumentParser docParser = new DocumentParser(originalString);
 
@@ -60,12 +63,34 @@ public class ImplementationTest {
 		System.out.println("wanted VBD: "+thirdPersonForm.convertToAppropriateForm("wanted", "VBD"));*/
 
 		// output sentences for a check
+		int sentenceCounter = 0;
 		for (ParsedSentence sentence : filteredSentences) {
+			sentenceCounter++;
+			if (sentence.sentenceText.contains("\n")) continue;
+			if (sentence.sentenceTokens.size() <= 1 ) continue;
 			// print sentence
 			sentence.print(debug);
 
+			String firstWord = sentence.sentenceTokens.get(0).toLowerCase();
+			System.out.println("First Word: "+ firstWord);
+			if (firstWord.equals("there-1") || firstWord.equals("these-1") || firstWord.equals("it-1")
+				|| (firstWord.equals("another-1") && sentence.sentenceTokens.get(1).toLowerCase().equals("example-2"))) {
+				continue;
+			}
+
+			// remove leading phrases
+			RemoveLeadingPhrases removeLeadingPhrases1 = new RemoveLeadingPhrases(sentence.sentenceTree);
+			Tree removedPhrases = removeLeadingPhrases1.resultingTree;
+
+			// put advp into vp
+			PutAdverbIntoNP putAdverbIntoVP = new PutAdverbIntoNP(removedPhrases);
+			Tree adverbProcessedPhrase = putAdverbIntoVP.resultingTree;
+
+			System.out.println("After ADVP moved");
+			System.out.println(adverbProcessedPhrase);
+
 			// mark unremovable
-			MarkUnmovable markUnmovable = new MarkUnmovable(sentence.sentenceTree);
+			MarkUnmovable markUnmovable = new MarkUnmovable(adverbProcessedPhrase);
 
 			// main clasue matcher
 			System.out.println("------------------- Main Clause Matcher -----------------");
@@ -160,7 +185,7 @@ public class ImplementationTest {
 				}
 				// Identify NER type of Noun Phrase and Choose Question type accordingly and insert it in the beginning
 				// Post process the final question
-				postprocesser.postProcessQuestion(mainClauseRelabeledTree);
+				//postprocesser.postProcessQuestion(mainClauseRelabeledTree);
 				index++;
 			}
 			System.out.println("--------------------------------------------------------");
@@ -177,5 +202,7 @@ public class ImplementationTest {
 		for (GeneratedQuestion q : questions) {
 			System.out.println(q);
 		}
+		System.out.println("Total Number of Sentences: "+sentenceCounter);
+		System.out.println("Total Number of Questions: "+questions.size());
 	}
 }

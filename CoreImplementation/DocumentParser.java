@@ -37,6 +37,8 @@ public class DocumentParser {
         //MG: Options: neural, statistical
         props.setProperty("coref.algorithm", "neural");
 
+        props.setProperty("ner.combinationMode", "HIGH_RECALL");
+
         // build pipeline
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
         System.out.println("Built Stanford CoreNLP Pipeline.");

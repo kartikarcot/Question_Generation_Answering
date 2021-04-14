@@ -53,38 +53,55 @@ public class GenerateQuestion {
 		answerPhraseExtractMatcher.find();
 
 		Tree phraseToMove = answerPhraseExtractMatcher.getNode("answer");
-		/*System.out.println("----- Phrase to Move ------");
+		System.out.println("----- Phrase to Move ------");
 		System.out.println(phraseToMove);
-		System.out.println("---------------------------");*/
+		System.out.println("---------------------------");
 
 		if (phraseToMove == null) return questionTrees;
 
 		Tree preposition = null;
 		if (!mainClauseSubject && phraseToMove.value().matches("PP.*")) {
+
 			Label label = phraseToMove.yield().get(0);
 			System.out.println("Label value: " + label.value());
 			preposition = phraseToMove.getChild(0);
+			Label childLabel = preposition.label();
+			if (!childLabel.toString().equals("IN")) preposition = null;
 			System.out.println("Preposition: "+preposition);
+			System.out.println("Preposition Label: "+childLabel);
 		}
 
 		// if phraseToMove is not an NP, take it as the first NP child
 		String npLabel = phraseToMove.label().toString();
 		if (!npLabel.contains("NP")) {
-			System.out.println("Label: "+phraseToMove.label());
-			String findNPPattern = npLabel+" << NP=toreplace";
+			System.out.println("Label: " + phraseToMove.label());
+			String findNPPattern = npLabel + " << NP=toreplace";
 			TregexMatcherWrapper matcher = new TregexMatcherWrapper(findNPPattern, sentenceTreeCopied);
 			if (matcher.matcher.find()) {
 				phraseToMove = matcher.matcher.getNode("toreplace");
 			} else {
 				return questionTrees;
 			}
-		} else {
-			String findCommaPattern = npLabel + " << (NP=tobereplace . /,/)";
-			TregexMatcherWrapper commaMatcher = new TregexMatcherWrapper(findCommaPattern, sentenceTreeCopied);
-			if (commaMatcher.matcher.find()) {
-				phraseToMove = commaMatcher.matcher.getNode("tobereplace");
+			npLabel = phraseToMove.label().toString();
+		}
+		if (npLabel.contains("NP")) {
+
+			String findNPPPPattern = npLabel + " < (@/NP/=tobereplace $+ @/PP/)";
+			TregexMatcherWrapper nPPPMatcher = new TregexMatcherWrapper(findNPPPPattern, phraseToMove);
+			if (nPPPMatcher.matcher.find()) {
+				phraseToMove = nPPPMatcher.matcher.getNode("tobereplace");
+			} else {
+
+				String findCommaPattern = npLabel + " << (NP=tobereplace . /,/)";
+				TregexMatcherWrapper commaMatcher = new TregexMatcherWrapper(findCommaPattern, phraseToMove);
+				if (commaMatcher.matcher.find()) {
+					phraseToMove = commaMatcher.matcher.getNode("tobereplace");
+				}
 			}
 		}
+
+		//npLabel = phraseToMove.label().toString();
+
 
 
 
@@ -197,7 +214,7 @@ public class GenerateQuestion {
 
 	private String determineNERtag(List<String> nerTags) {
 		for (int i = nerTags.size() -1; i >=0; i--) {
-			if (!nerTags.get(i).equals("O")) {
+			if (!nerTags.get(i).equals("O") && !nerTags.get(i).equals("NATIONALITY")) {
 				return nerTags.get(i);
 			}
 		}
@@ -208,14 +225,16 @@ public class GenerateQuestion {
 		if (nerTag.equals("O")) {
 			return null;
 		}
-		else if (nerTag.equals("PERSON")) {
+		else if (nerTag.equals("ORGANIZATION")  ||nerTag.equals("PERSON") || nerTag.equals("NATIONALITY")) {
 			return "(Ques Who)";
-		} else if (nerTag.equals("ORGANIZATION")) {
+		} else if ( nerTag.equals("LOCATION")) {
 			return "(Ques Where)";
 		} else if (nerTag.equals("DATE")) {
 			return "(Ques When)";
 		} else if (nerTag.equals("DURATION")) {
 			return "(Ques (SubQ How) (SubQ long))";
+		} else if (nerTag.equals("NUMBER")) {
+			return "(Ques (SubQ How) (SubQ many))";
 		} else {
 			return "(Ques What)";
 		}
