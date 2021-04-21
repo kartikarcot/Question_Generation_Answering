@@ -17,10 +17,10 @@ public class ImplementationTest {
 		// String originalString = "Alvin is a student at CMU University. He is a Master's Student! Alvin wanted to play";
 		//String originalString = "Alvin wanted to play. Alvin is walking his dog. Students need a break. Karthik is sad.";
 		//load the wiki file
-		DataLoader dataLoader = new DataLoader("noun_counting_data/a1.txt");
-		String originalString = dataLoader.getText();
-		System.out.println(originalString);
-
+//		DataLoader dataLoader = new DataLoader("noun_counting_data/a1.txt");
+//		String originalString = dataLoader.getText();
+//		System.out.println(originalString);
+		String originalString = "Created by Ken Sugimori, Gyarados first appeared in the video games Pokémon Red and Pokemon Green and subsequent sequels, later appearing in various merchandise, spinoff titles and animated and printed adaptations of the franchise.";
 		// parse sentence
 		DocumentParser docParser = new DocumentParser(originalString);
 

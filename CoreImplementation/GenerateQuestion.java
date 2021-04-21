@@ -102,10 +102,6 @@ public class GenerateQuestion {
 
 		//npLabel = phraseToMove.label().toString();
 
-
-
-
-
 		// phrase answer
 		List<Label> answerTokensLabel = phraseToMove.yield();
 		List<String> answerTokens = new ArrayList<>();
@@ -144,7 +140,12 @@ public class GenerateQuestion {
 		System.out.println("---------------------------");*/
 
 
-		if (finalTag == null) return questionTrees;
+		if (finalTag == null) {
+			if (mainClauseSubject) {
+
+			}
+			return questionTrees;
+		}
 		String questionType = determineQuestionType(finalTag);
 		// Question type will return null if the nertag was "0". Don't form questions about this.
 		if (questionType != null) {
