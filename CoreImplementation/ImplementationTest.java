@@ -17,8 +17,11 @@ public class ImplementationTest {
 		// String originalString = "Alvin is a student at CMU University. He is a Master's Student! Alvin wanted to play";
 		//String originalString = "Alvin wanted to play. Alvin is walking his dog. Students need a break. Karthik is sad.";
 		//load the wiki file
-		DataLoader dataLoader = new DataLoader("a1.txt");
+		DataLoader dataLoader = new DataLoader("noun_counting_data/a1.txt");
 		String originalString = dataLoader.getText();
+		System.out.println(originalString);
+//		String originalString = "IGN called it \"one of the most powerful Pokémon ever encountered\", comparing it to the image of Chinese mythological dragons.";
+//		String originalString = "Gyarados (ギャラドス, \"Gyaradosu\",  or ) is a Pokémon species in Nintendo and Game Freak's Pokémon franchise.";
 		//String originalString = "The term \"domestic dog\" is generally used for both domesticated and feral varieties.";
 		//String originalString = "An adult female is a bitch.";
 		//String originalString = "An adult male capable of reproduction is a stud.";
@@ -37,6 +40,7 @@ public class ImplementationTest {
 		//String originalString = "The classical Zodiac is a product of a revision of the Old Babylonian system in later Neo-Babylonian astronomy 6th century BC.";
 		//String originalString = "Greek astronomy essentially adopted the older Babylonian system in the Hellenistic era, first introduced to Greece by Eudoxus of Cnidus in the 4th century BC.";
 		//String originalString = "It was only in 1930 that Eugene Delporte, the Belgian astronomer created an authoritative map demarcating the areas of sky under different constellations.";
+//		String originalString = "Prior to the FireRed and LeafGreen saga, Blue returns Gyarados to Red.A red Gyarados was the leader of a group of Gyarados";
 		// parse sentence
 		DocumentParser docParser = new DocumentParser(originalString);
 

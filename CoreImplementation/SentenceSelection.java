@@ -46,6 +46,7 @@ public class SentenceSelection {
 
 	public List<ParsedSentence> filter(List<ParsedSentence> parsedSentences) {
 		List<ParsedSentence> filteredSentences = new ArrayList<>();
+		Integer i = 0;
 		for (ParsedSentence sentence : parsedSentences) {
 			Boolean filtered = false;
 			for (Function<ParsedSentence, Boolean> filter : this.filters) {
@@ -57,6 +58,7 @@ public class SentenceSelection {
 			if (filtered)
 				continue;
 			// if we are here the sentence is viable for question generation
+			System.out.println("The sentence number: "+i++);
 			downcaseTheFirstToken(sentence);
 			filteredSentences.add(sentence);
 		}
@@ -67,10 +69,11 @@ public class SentenceSelection {
 		String firstTag = sentence.sentenceTags.get(0);
 		String firstToken = sentence.sentenceTokens.get(0);
 		String firstWord = firstToken.split("-")[0];
-		if (firstTag.equals("O"))
+		if (firstTag.equals("O") && !firstWord.equals(firstWord.toLowerCase()))
 		{
 			// fix ner tags array
 			sentence.sentenceTokens.set(0, firstToken.toLowerCase());
+			System.out.println(sentence.sentenceText + ": " + firstWord);
 			// fix the tree as well
 			try {
 				TregexPattern searchPattern = TregexPattern.compile(firstWord + "=renamedtag");

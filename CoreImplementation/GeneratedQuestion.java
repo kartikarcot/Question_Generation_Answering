@@ -6,7 +6,12 @@ public class GeneratedQuestion {
     public String answerPhrase;
 
     public GeneratedQuestion(String generatedQuestion, String sourceSentence, String answerPhrase) {
-        this.generatedQuestion = generatedQuestion;
+        this.generatedQuestion = generatedQuestion.replaceAll(" *(\\.|\\,|\\?) *", "$1 ");
+        this.generatedQuestion = this.generatedQuestion.replaceAll(" *(\\') *","$1 ");
+        this.generatedQuestion = this.generatedQuestion.replaceAll(" \"( +)(.*)( +)\"","\"$2\"");
+        if (this.generatedQuestion.length() > 2)
+            this.generatedQuestion = this.generatedQuestion.substring(0,this.generatedQuestion.length()-2)+"?";
+        this.generatedQuestion = this.generatedQuestion.replaceAll("(\\,|\"|\\')\\?","?");
         this.sourceSentence = sourceSentence;
         this.answerPhrase = answerPhrase;
     }
