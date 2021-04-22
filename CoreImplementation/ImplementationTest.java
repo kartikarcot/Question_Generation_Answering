@@ -3,9 +3,13 @@ package CoreImplementation;
 
 import edu.stanford.nlp.ling.Label;
 import com.sun.tools.javac.Main;
+import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.trees.tregex.TregexMatcher;
+import edu.stanford.nlp.trees.tregex.TregexPattern;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ImplementationTest {
@@ -17,8 +21,9 @@ public class ImplementationTest {
 		// String originalString = "Alvin is a student at CMU University. He is a Master's Student! Alvin wanted to play";
 		//String originalString = "Alvin wanted to play. Alvin is walking his dog. Students need a break. Karthik is sad.";
 		//load the wiki file
-		DataLoader dataLoader = new DataLoader("noun_counting_data/a1.txt");
+		DataLoader dataLoader = new DataLoader("noun_counting_data/a2.txt");
 		String originalString = dataLoader.getText();
+//		String originalString = "This Gyrados is a great pokemon";
 		System.out.println(originalString);
 		// parse sentence
 		DocumentParser docParser = new DocumentParser(originalString);
@@ -36,8 +41,12 @@ public class ImplementationTest {
 		// Generate Question
 		GenerateQuestion generator = new GenerateQuestion();
 		// Post process the final question
-		PostProcessQuestion postprocesser = new PostProcessQuestion();
+		// PostProcessQuestion postprocesser = new PostProcessQuestion();
 		List<GeneratedQuestion> questions = new ArrayList<>();
+
+		LexicalizedParser lp = LexicalizedParser.loadModel(
+						"edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz"
+		);
 
 		//MainClauseSubjectVerbConversion thirdPersonForm = new MainClauseSubjectVerbConversion();
 		/*System.out.println("------------------- Third Person Form Test -------------------");
@@ -99,12 +108,17 @@ public class ImplementationTest {
 						0, sentence.sentenceTags, sentence.sentenceTokens, true);
 
 				if (questionTrees.size() == 0) {
-					String questionTreeString = "(ROOT (SBARQ (WHNP (WP What)) (SQ (MD can) (NP (PRP you)) (VP (VB say) (PP (IN about) " + mainMatcher.resultingSubject.toString() + "))) (. .)))";
-					Tree customQuestion = Tree.valueOf(questionTreeString);
-					List<String> operations = new ArrayList<>();
-					operations.add("relabel msb NP");
-					TsurgeonWrapper relabelOperation = new TsurgeonWrapper(customQuestion, "ROOT << mainclausesub=msb", operations);
-					questionTrees.add(relabelOperation.resultingTree);
+					TregexPattern mainSubjectPattern = TregexPattern.compile("mainclausesub << (DT|PRP)");
+					TregexMatcher mainSubjectMatcher = mainSubjectPattern.matcher(mainMatcher.resultingSubject);
+					Boolean found = mainSubjectMatcher.find();
+					if (!found) {
+						String questionTreeString = "(ROOT (SBARQ (WHNP (WP What)) (SQ (MD can) (NP (PRP you)) (VP (VB say) (PP (IN about) " + mainMatcher.resultingSubject.toString() + "))) (. .)))";
+						Tree customQuestion = Tree.valueOf(questionTreeString);
+						List<String> operations = new ArrayList<>();
+						operations.add("relabel msb NP");
+						TsurgeonWrapper relabelOperation = new TsurgeonWrapper(customQuestion, "ROOT << mainclausesub=msb", operations);
+						questionTrees.add(relabelOperation.resultingTree);
+					}
 				}
 				for (Tree questionTree : questionTrees) {
 					PrepositionalPhraseComma prepositionalPhraseComma = new PrepositionalPhraseComma(questionTree);
@@ -119,7 +133,8 @@ public class ImplementationTest {
 					for (Label leave : answerPhraseYield) {
 						answerPhrase += leave.value() + " ";
 					}
-					GeneratedQuestion newQ = new GeneratedQuestion(question, sentence.sentenceText, answerPhrase);
+					Tree parse = lp.parse(question);
+					GeneratedQuestion newQ = new GeneratedQuestion(question, sentence.sentenceText, answerPhrase, parse.score());
 					questions.add(newQ);
 				}
 			}
@@ -159,6 +174,7 @@ public class ImplementationTest {
 				List<Tree> questionTrees = generator.generateQuestions(mainClauseRelabeledTree,
 												index, sentence.sentenceTags, sentence.sentenceTokens, false);
 
+
 				for (Tree questionTree : questionTrees) {
 
 					// add commas around PP
@@ -173,7 +189,8 @@ public class ImplementationTest {
 					for (Label leave : answerPhraseYield) {
 						answerPhrase += leave.value() + " ";
 					}
-					GeneratedQuestion newQ = new GeneratedQuestion(question, sentence.sentenceText, answerPhrase);
+					Tree parse = lp.parse(question);
+					GeneratedQuestion newQ = new GeneratedQuestion(question, sentence.sentenceText, answerPhrase, parse.score());
 					questions.add(newQ);
 				}
 				// Identify NER type of Noun Phrase and Choose Question type accordingly and insert it in the beginning
@@ -191,6 +208,7 @@ public class ImplementationTest {
 			// Write to text file
 		}
 
+		Collections.sort(questions);
 		System.out.println("************* Final Questions ***************");
 		for (GeneratedQuestion q : questions) {
 			System.out.println(q);
