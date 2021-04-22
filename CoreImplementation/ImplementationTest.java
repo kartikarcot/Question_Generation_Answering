@@ -17,10 +17,9 @@ public class ImplementationTest {
 		// String originalString = "Alvin is a student at CMU University. He is a Master's Student! Alvin wanted to play";
 		//String originalString = "Alvin wanted to play. Alvin is walking his dog. Students need a break. Karthik is sad.";
 		//load the wiki file
-//		DataLoader dataLoader = new DataLoader("noun_counting_data/a1.txt");
-//		String originalString = dataLoader.getText();
-//		System.out.println(originalString);
-		String originalString = "Created by Ken Sugimori, Gyarados first appeared in the video games Pokémon Red and Pokemon Green and subsequent sequels, later appearing in various merchandise, spinoff titles and animated and printed adaptations of the franchise.";
+		DataLoader dataLoader = new DataLoader("noun_counting_data/a1.txt");
+		String originalString = dataLoader.getText();
+		System.out.println(originalString);
 		// parse sentence
 		DocumentParser docParser = new DocumentParser(originalString);
 
@@ -84,7 +83,9 @@ public class ImplementationTest {
 			//System.out.println("Verb: "+mainMatcher.resultingVerb+", "+mainMatcher.resultingVerbTag);
 			//System.out.println("Before: "+mainMatcher.resultingTree);
 			if (mainMatcher.resultingSubject != null) {
+				System.out.println(mainMatcher.resultingTree.toString());
 				Tree labeledTree = MarkUnmovable.removeUnmovable(mainMatcher.resultingTree);
+				System.out.println("Removed unmovable phrases" + labeledTree.toString());
 				//MainSubjectVerbTense verbTense = new MainSubjectVerbTense(labeledTree, mainMatcher.resultingVerb, mainMatcher.resultingVerbTag);
 				//System.out.print("After: ");
 				//System.out.println(verbTense.resultingTree);
@@ -97,13 +98,21 @@ public class ImplementationTest {
 				List<Tree> questionTrees = generator.generateQuestions(labeledTree,
 						0, sentence.sentenceTags, sentence.sentenceTokens, true);
 
+				if (questionTrees.size() == 0) {
+					String questionTreeString = "(ROOT (SBARQ (WHNP (WP What)) (SQ (MD can) (NP (PRP you)) (VP (VB say) (PP (IN about) " + mainMatcher.resultingSubject.toString() + "))) (. .)))";
+					Tree customQuestion = Tree.valueOf(questionTreeString);
+					List<String> operations = new ArrayList<>();
+					operations.add("relabel msb NP");
+					TsurgeonWrapper relabelOperation = new TsurgeonWrapper(customQuestion, "ROOT << mainclausesub=msb", operations);
+					questionTrees.add(relabelOperation.resultingTree);
+				}
 				for (Tree questionTree : questionTrees) {
 					PrepositionalPhraseComma prepositionalPhraseComma = new PrepositionalPhraseComma(questionTree);
 
 					String question = "";
 					List<Label> questionYield = prepositionalPhraseComma.resultingTree.yield();
 					for (Label leave : questionYield) {
-						question+=leave.value()+ " ";
+						question += leave.value() + " ";
 					}
 					String answerPhrase = "";
 					List<Label> answerPhraseYield = mainMatcher.resultingSubject.yield();
