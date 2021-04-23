@@ -21,9 +21,9 @@ public class ImplementationTest {
 		// String originalString = "Alvin is a student at CMU University. He is a Master's Student! Alvin wanted to play";
 		//String originalString = "Alvin wanted to play. Alvin is walking his dog. Students need a break. Karthik is sad.";
 		//load the wiki file
-		DataLoader dataLoader = new DataLoader("noun_counting_data/a2.txt");
-		String originalString = dataLoader.getText();
-//		String originalString = "This Gyrados is a great pokemon";
+//		DataLoader dataLoader = new DataLoader("noun_counting_data/a2.txt");
+//		String originalString = dataLoader.getText();
+		String originalString = "Gyrados is a great pokemon. He is a rock type pokemon";
 		System.out.println(originalString);
 		// parse sentence
 		DocumentParser docParser = new DocumentParser(originalString);
@@ -59,14 +59,14 @@ public class ImplementationTest {
 		for (ParsedSentence sentence : filteredSentences) {
 			sentenceCounter++;
 			if (sentence.sentenceText.contains("\n")) continue;
-			if (sentence.sentenceTokens.size() <= 1 ) continue;
+			if (sentence.sentenceTokens.size() <= 1) continue;
 			// print sentence
 			sentence.print(debug);
 
 			String firstWord = sentence.sentenceTokens.get(0).toLowerCase();
-			System.out.println("First Word: "+ firstWord);
+			System.out.println("First Word: " + firstWord);
 			if (firstWord.equals("there-1") || firstWord.equals("these-1") || firstWord.equals("it-1")
-				|| (firstWord.equals("another-1") && sentence.sentenceTokens.get(1).toLowerCase().equals("example-2"))) {
+							|| (firstWord.equals("another-1") && sentence.sentenceTokens.get(1).toLowerCase().equals("example-2"))) {
 				continue;
 			}
 
@@ -88,10 +88,15 @@ public class ImplementationTest {
 			System.out.println("------------------- Main Clause Matcher -----------------");
 			MainClauseMatcher mainMatcher = new MainClauseMatcher(markUnmovable.resultingTree);
 
-			System.out.println("Subject: "+mainMatcher.resultingSubject);
+			System.out.println("Subject: " + mainMatcher.resultingSubject);
 			//System.out.println("Verb: "+mainMatcher.resultingVerb+", "+mainMatcher.resultingVerbTag);
 			//System.out.println("Before: "+mainMatcher.resultingTree);
+			TregexPattern pronounPattern = TregexPattern.compile("ROOT <<, PRP");
+			TregexMatcher pronounMatcher = pronounPattern.matcher(sentence.sentenceTree);
+			Boolean firstWordPronoun = pronounMatcher.find();
+
 			if (mainMatcher.resultingSubject != null) {
+				List<Tree> questionTrees = new ArrayList<>();
 				System.out.println(mainMatcher.resultingTree.toString());
 				Tree labeledTree = MarkUnmovable.removeUnmovable(mainMatcher.resultingTree);
 				System.out.println("Removed unmovable phrases" + labeledTree.toString());
@@ -104,10 +109,10 @@ public class ImplementationTest {
 				labeledTree = removeLeadingPhrases.resultingTree;
 
 				// generate question
-				List<Tree> questionTrees = generator.generateQuestions(labeledTree,
-						0, sentence.sentenceTags, sentence.sentenceTokens, true);
+				questionTrees = generator.generateQuestions(labeledTree,
+								0, sentence.sentenceTags, sentence.sentenceTokens, true);
 
-				if (questionTrees.size() == 0) {
+				if (!firstWordPronoun) {
 					TregexPattern mainSubjectPattern = TregexPattern.compile("mainclausesub << (DT|PRP)");
 					TregexMatcher mainSubjectMatcher = mainSubjectPattern.matcher(mainMatcher.resultingSubject);
 					Boolean found = mainSubjectMatcher.find();
@@ -120,6 +125,7 @@ public class ImplementationTest {
 						questionTrees.add(relabelOperation.resultingTree);
 					}
 				}
+
 				for (Tree questionTree : questionTrees) {
 					PrepositionalPhraseComma prepositionalPhraseComma = new PrepositionalPhraseComma(questionTree);
 
@@ -140,74 +146,74 @@ public class ImplementationTest {
 			}
 
 
-			// find the main clause: Example Tregex Usage
-			NounPhraseMatcher nounPhrase = new NounPhraseMatcher(mainMatcher.resultingTree);
-			System.out.println("----------------- Noun Phrase Matcher -------------------");
-			//System.out.println(nounPhrase.treeWithNounPhrasesMarked);
+			if (!firstWordPronoun) {
+				// find the main clause: Example Tregex Usage
+				NounPhraseMatcher nounPhrase = new NounPhraseMatcher(mainMatcher.resultingTree);
+				System.out.println("----------------- Noun Phrase Matcher -------------------");
+				//System.out.println(nounPhrase.treeWithNounPhrasesMarked);
 
-			nounPhrase.treeWithNounPhrasesMarked = MarkUnmovable.removeUnmovable(nounPhrase.treeWithNounPhrasesMarked);
+				nounPhrase.treeWithNounPhrasesMarked = MarkUnmovable.removeUnmovable(nounPhrase.treeWithNounPhrasesMarked);
 
-			// remove leading phrases
-			RemoveLeadingPhrases removeLeadingPhrases = new RemoveLeadingPhrases(nounPhrase.treeWithNounPhrasesMarked);
-			Tree labeledTree = removeLeadingPhrases.resultingTree;
+				// remove leading phrases
+				RemoveLeadingPhrases removeLeadingPhrases = new RemoveLeadingPhrases(nounPhrase.treeWithNounPhrasesMarked);
+				Tree labeledTree = removeLeadingPhrases.resultingTree;
 
-			// generate a question for each marked nounphrase
-			Integer index = 0;
-			for (Tree np : nounPhrase.resultingNodes) {
-				//System.out.println("Noun Phrase: " + np);
-				//NodePruner nodePruner = new NodePruner(nounPhrase.treeWithNounPhrasesMarked, np.label().toString());
-				//System.out.println("Sentence with Noun Phrase Removed: " + nodePruner.resultingTree);
+				// generate a question for each marked nounphrase
+				Integer index = 0;
+				for (Tree np : nounPhrase.resultingNodes) {
+					//System.out.println("Noun Phrase: " + np);
+					//NodePruner nodePruner = new NodePruner(nounPhrase.treeWithNounPhrasesMarked, np.label().toString());
+					//System.out.println("Sentence with Noun Phrase Removed: " + nodePruner.resultingTree);
 
-				Tree decomposedPredicateTree = null;
-				// Decompose predicates
-				decomposedPredicateTree = decomposer.decomposePredicate(labeledTree);
+					Tree decomposedPredicateTree = null;
+					// Decompose predicates
+					decomposedPredicateTree = decomposer.decomposePredicate(labeledTree);
 
-				// Perform tsurgeon manipulations is Bob a student at CMU (subject auxillary inversion)
-				Tree subAuxInverted = invertor.invertSubjectAuxillary(decomposedPredicateTree);
+					// Perform tsurgeon manipulations is Bob a student at CMU (subject auxillary inversion)
+					Tree subAuxInverted = invertor.invertSubjectAuxillary(decomposedPredicateTree);
 
-				//Relabel main clause
-				RelabelMainClause relabelObj = new RelabelMainClause(subAuxInverted);
-				Tree mainClauseRelabeledTree = (relabelObj.sentenceTreeCopy);
-				//System.out.println("Text with relabeled main clause " + mainClauseRelabeledTree.toString());
+					//Relabel main clause
+					RelabelMainClause relabelObj = new RelabelMainClause(subAuxInverted);
+					Tree mainClauseRelabeledTree = (relabelObj.sentenceTreeCopy);
+					//System.out.println("Text with relabeled main clause " + mainClauseRelabeledTree.toString());
 
-				// generate question
-				List<Tree> questionTrees = generator.generateQuestions(mainClauseRelabeledTree,
-												index, sentence.sentenceTags, sentence.sentenceTokens, false);
+					// generate question
+					List<Tree> questionTrees = generator.generateQuestions(mainClauseRelabeledTree,
+									index, sentence.sentenceTags, sentence.sentenceTokens, false);
 
 
-				for (Tree questionTree : questionTrees) {
+					for (Tree questionTree : questionTrees) {
 
-					// add commas around PP
-					PrepositionalPhraseComma prepositionalPhraseComma = new PrepositionalPhraseComma(questionTree);
-					String question = "";
-					List<Label> questionYield = prepositionalPhraseComma.resultingTree.yield();
-					for (Label leave : questionYield) {
-						question+=leave.value()+ " ";
+						// add commas around PP
+						PrepositionalPhraseComma prepositionalPhraseComma = new PrepositionalPhraseComma(questionTree);
+						String question = "";
+						List<Label> questionYield = prepositionalPhraseComma.resultingTree.yield();
+						for (Label leave : questionYield) {
+							question += leave.value() + " ";
+						}
+						String answerPhrase = "";
+						List<Label> answerPhraseYield = np.yield();
+						for (Label leave : answerPhraseYield) {
+							answerPhrase += leave.value() + " ";
+						}
+						Tree parse = lp.parse(question);
+						GeneratedQuestion newQ = new GeneratedQuestion(question, sentence.sentenceText, answerPhrase, parse.score());
+						questions.add(newQ);
 					}
-					String answerPhrase = "";
-					List<Label> answerPhraseYield = np.yield();
-					for (Label leave : answerPhraseYield) {
-						answerPhrase += leave.value() + " ";
-					}
-					Tree parse = lp.parse(question);
-					GeneratedQuestion newQ = new GeneratedQuestion(question, sentence.sentenceText, answerPhrase, parse.score());
-					questions.add(newQ);
+					// Identify NER type of Noun Phrase and Choose Question type accordingly and insert it in the beginning
+					// Post process the final question
+					//postprocesser.postProcessQuestion(mainClauseRelabeledTree);
+					index++;
 				}
-				// Identify NER type of Noun Phrase and Choose Question type accordingly and insert it in the beginning
-				// Post process the final question
-				//postprocesser.postProcessQuestion(mainClauseRelabeledTree);
-				index++;
+				System.out.println("--------------------------------------------------------");
+
+
+				// Identify NER type of Noun Phrase
+				// Choose Question type accordingly
+				// Construct final question
+				// Write to text file
 			}
-			System.out.println("--------------------------------------------------------");
-
-
-
-			// Identify NER type of Noun Phrase
-			// Choose Question type accordingly
-			// Construct final question
-			// Write to text file
 		}
-
 		Collections.sort(questions);
 		System.out.println("************* Final Questions ***************");
 		for (GeneratedQuestion q : questions) {
