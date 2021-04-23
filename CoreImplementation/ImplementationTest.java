@@ -140,8 +140,10 @@ public class ImplementationTest {
 						answerPhrase += leave.value() + " ";
 					}
 					Tree parse = lp.parse(question);
-					GeneratedQuestion newQ = new GeneratedQuestion(question, sentence.sentenceText, answerPhrase, parse.score());
-					questions.add(newQ);
+					if (parse.size() >= 5) {
+						GeneratedQuestion newQ = new GeneratedQuestion(question, sentence.sentenceText, answerPhrase, parse.score());
+						questions.add(newQ);
+					}
 				}
 			}
 
@@ -197,8 +199,10 @@ public class ImplementationTest {
 							answerPhrase += leave.value() + " ";
 						}
 						Tree parse = lp.parse(question);
-						GeneratedQuestion newQ = new GeneratedQuestion(question, sentence.sentenceText, answerPhrase, parse.score());
-						questions.add(newQ);
+						if (parse.yield().size() >= 5) {
+							GeneratedQuestion newQ = new GeneratedQuestion(question, sentence.sentenceText, answerPhrase, parse.score());
+							questions.add(newQ);
+						}
 					}
 					// Identify NER type of Noun Phrase and Choose Question type accordingly and insert it in the beginning
 					// Post process the final question
