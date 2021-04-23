@@ -24,7 +24,7 @@ public class GeneratedQuestion implements Comparable<GeneratedQuestion>{
 
     @Override
     public int compareTo(GeneratedQuestion o) {
-        if (this.score < o.score) return -1;
-        return 1;
+        if (this.score < o.score) return 1;
+        return -1;
     }
 }
