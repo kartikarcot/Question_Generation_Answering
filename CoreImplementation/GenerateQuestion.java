@@ -7,6 +7,7 @@ import edu.stanford.nlp.trees.tregex.TregexPattern;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class GenerateQuestion {
 	/*
@@ -14,7 +15,7 @@ public class GenerateQuestion {
 	sentenceTree: (Tree) This will be a tree with subject and auxillary inverted and S relabeled as SQ
 	nounPhraseIdx: (Integer) This will be the index of the noun phrase to change
 	 */
-	public List<Tree> generateQuestions(Tree sentenceTree, Integer nounPhraseIdx, List<String> nerTags, List<String> sentenceTokens, boolean mainClauseSubject) {
+	public List<Tree> generateQuestions(Tree sentenceTree, Integer nounPhraseIdx, List<String> nerTags, List<String> sentenceTokens, Map<String, String> tagMap, boolean mainClauseSubject) {
 		// container for all possible questions generated
 		List<Tree> questionTrees = new ArrayList<>();
 
@@ -73,7 +74,7 @@ public class GenerateQuestion {
 
 		// if phraseToMove is not an NP, take it as the first NP child
 		String npLabel = phraseToMove.label().toString();
-		if (!npLabel.contains("NP")) {
+		if (!npLabel.contains("NP") && !npLabel.contains("mainclausesub")) {
 			System.out.println("Label: " + phraseToMove.label());
 			String findNPPattern = npLabel + " << NP=toreplace";
 			TregexMatcherWrapper matcher = new TregexMatcherWrapper(findNPPattern, sentenceTreeCopied);
@@ -107,11 +108,11 @@ public class GenerateQuestion {
 		List<String> answerTokens = new ArrayList<>();
 		//System.out.println("---- Answer Tokens ----");
 		for (Label label: answerTokensLabel) {
-			answerTokens.add(label.toString());
+			answerTokens.add(label.value());
 		}
 		//System.out.println("Tag");
-		List<String> tags = new ArrayList<>();
-		int answerTokenCounter = 0;
+		//List<String> tokens = new ArrayList<>();
+		/*int answerTokenCounter = 0;
 		for (int i = 0; i < sentenceTokens.size(); i++) {
 			String nerTag = nerTags.get(i);
 			String token = sentenceTokens.get(i);
@@ -125,8 +126,8 @@ public class GenerateQuestion {
 				tags.add(nerTag);
 				answerTokenCounter++;
 			}
-		}
-		String finalTag = determineNERtag(tags);
+		}*/
+		String finalTag = determineNERtag(answerTokens, tagMap);
 		/*System.out.println("-------- NER Tag ----------");
 		for (String noun : answerTokens) {
 			System.out.print(noun + " ");
@@ -213,12 +214,21 @@ public class GenerateQuestion {
 		//return questionTrees;
 	}
 
-	private String determineNERtag(List<String> nerTags) {
-		for (int i = nerTags.size() -1; i >=0; i--) {
+	private String determineNERtag(List<String> tokens, Map<String, String> tagMap) {
+		System.out.println("Determine NER Tag");
+		for (String token : tokens) {
+			String tag = tagMap.get(token);
+			if (tag == null) continue;
+			System.out.println(token + " : " + tag);
+			if (!tag.equals("O") && !tag.equals("NATIONALITY")) {
+				return tag;
+			}
+		}
+		/*for (int i = nerTags.size() -1; i >=0; i--) {
 			if (!nerTags.get(i).equals("O") && !nerTags.get(i).equals("NATIONALITY")) {
 				return nerTags.get(i);
 			}
-		}
+		}*/
 		return "O";
 	}
 

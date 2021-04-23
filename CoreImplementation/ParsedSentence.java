@@ -5,13 +5,16 @@ import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.trees.Tree;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ParsedSentence {
     public Tree sentenceTree;
     public String sentenceText;
     public List<String> sentenceTokens;
     public List<String> sentenceTags;
+    public Map<String, String> tagMap;
 
     public String corefResolvedSentenceText;
     public List<String> corefResolvedSentenceTokens;
@@ -32,6 +35,12 @@ public class ParsedSentence {
 
         // store raw sentence
         sentenceText = sentence.text();
+
+        // create map
+        tagMap = new HashMap<>();
+        for (int i = 0; i < sentenceTags.size(); i++) {
+            tagMap.put(originalTokenArray.get(i).value(), sentenceTags.get(i));
+        }
     }
     public ParsedSentence(CoreSentence sentence, List<String> corefResolvedSentence) {
 
@@ -54,9 +63,15 @@ public class ParsedSentence {
 
         // store raw sentence
         sentenceText = sentence.text();
+
+        // create map
+        tagMap = new HashMap<>();
+        for (int i = 0; i < sentenceTags.size(); i++) {
+            tagMap.put(originalTokenArray.get(i).value(), sentenceTags.get(i));
+        }
+
         // store corref resolved raw sentence
         corefResolvedSentenceText = String.join(" ", corefResolvedSentence);
-
 
     }
 
@@ -75,6 +90,10 @@ public class ParsedSentence {
             System.out.print(" " + tag);
         }
         System.out.println();
+        System.out.println("Tag Maps:");
+        for (Map.Entry<String, String>entry : tagMap.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
         System.out.println("-------------------------------------------------------");
     }
 }

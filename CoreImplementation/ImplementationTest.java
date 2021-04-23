@@ -21,10 +21,12 @@ public class ImplementationTest {
 		// String originalString = "Alvin is a student at CMU University. He is a Master's Student! Alvin wanted to play";
 		//String originalString = "Alvin wanted to play. Alvin is walking his dog. Students need a break. Karthik is sad.";
 		//load the wiki file
-//		DataLoader dataLoader = new DataLoader("noun_counting_data/a2.txt");
-//		String originalString = dataLoader.getText();
-		String originalString = "Gyrados is a great pokemon. He is a rock type pokemon";
-		System.out.println(originalString);
+		DataLoader dataLoader = new DataLoader("a2.txt");
+		String originalString = dataLoader.getText();
+		//String originalString = "Gyrados is a great pokemon. He is a rock type pokemon";
+		//String originalString = "Afterwards, however, Ash is matched against Tobias, a trainer who famously swept all eight Sinnoh League gyms and all other opponents with only his legendary Pokémon Darkrai.";
+		//String originalString = "Taylor enjoyed playing Ash because of his \"low, husky voice\" and \"energy and excitement\".";
+		//System.out.println(originalString);
 		// parse sentence
 		DocumentParser docParser = new DocumentParser(originalString);
 
@@ -110,7 +112,7 @@ public class ImplementationTest {
 
 				// generate question
 				questionTrees = generator.generateQuestions(labeledTree,
-								0, sentence.sentenceTags, sentence.sentenceTokens, true);
+								0, sentence.sentenceTags, sentence.sentenceTokens, sentence.tagMap, true);
 
 				if (!firstWordPronoun) {
 					TregexPattern mainSubjectPattern = TregexPattern.compile("mainclausesub << (DT|PRP)");
@@ -179,7 +181,7 @@ public class ImplementationTest {
 
 					// generate question
 					List<Tree> questionTrees = generator.generateQuestions(mainClauseRelabeledTree,
-									index, sentence.sentenceTags, sentence.sentenceTokens, false);
+									index, sentence.sentenceTags, sentence.sentenceTokens, sentence.tagMap, false);
 
 
 					for (Tree questionTree : questionTrees) {
