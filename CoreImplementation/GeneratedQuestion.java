@@ -27,4 +27,15 @@ public class GeneratedQuestion implements Comparable<GeneratedQuestion>{
         if (this.score < o.score) return 1;
         return -1;
     }
+
+    @Override
+    public int hashCode() {
+        // TODO Auto-generated method stub
+        return this.generatedQuestion.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object g) {
+        return  this.generatedQuestion.equals(((GeneratedQuestion)g).generatedQuestion);
+    }
 }

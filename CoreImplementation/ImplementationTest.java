@@ -8,9 +8,7 @@ import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.tregex.TregexMatcher;
 import edu.stanford.nlp.trees.tregex.TregexPattern;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class ImplementationTest {
 	public static void main(String[] args) throws Exception {
@@ -21,9 +19,9 @@ public class ImplementationTest {
 		// String originalString = "Alvin is a student at CMU University. He is a Master's Student! Alvin wanted to play";
 		//String originalString = "Alvin wanted to play. Alvin is walking his dog. Students need a break. Karthik is sad.";
 		//load the wiki file
-		DataLoader dataLoader = new DataLoader("a2.txt");
+		DataLoader dataLoader = new DataLoader("noun_counting_data/a2.txt");
 		String originalString = dataLoader.getText();
-		//String originalString = "Gyrados is a great pokemon. He is a rock type pokemon";
+//		String originalString = "Gyrados is a great pokemon. Gyrados is a great pokemon. Gyrados is cool.";
 		//String originalString = "Afterwards, however, Ash is matched against Tobias, a trainer who famously swept all eight Sinnoh League gyms and all other opponents with only his legendary Pokémon Darkrai.";
 		//String originalString = "Taylor enjoyed playing Ash because of his \"low, husky voice\" and \"energy and excitement\".";
 		//System.out.println(originalString);
@@ -44,7 +42,7 @@ public class ImplementationTest {
 		GenerateQuestion generator = new GenerateQuestion();
 		// Post process the final question
 		// PostProcessQuestion postprocesser = new PostProcessQuestion();
-		List<GeneratedQuestion> questions = new ArrayList<>();
+		HashSet<GeneratedQuestion> questions = new HashSet<>();
 
 		LexicalizedParser lp = LexicalizedParser.loadModel(
 						"edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz"
@@ -98,9 +96,9 @@ public class ImplementationTest {
 			Boolean firstWordPronoun = pronounMatcher.find();
 
 			if (mainMatcher.resultingSubject != null) {
+				Tree labeledTree = MarkUnmovable.removeUnmovable(mainMatcher.resultingTree);
 				List<Tree> questionTrees = new ArrayList<>();
 				System.out.println(mainMatcher.resultingTree.toString());
-				Tree labeledTree = MarkUnmovable.removeUnmovable(mainMatcher.resultingTree);
 				System.out.println("Removed unmovable phrases" + labeledTree.toString());
 				//MainSubjectVerbTense verbTense = new MainSubjectVerbTense(labeledTree, mainMatcher.resultingVerb, mainMatcher.resultingVerbTag);
 				//System.out.print("After: ");
@@ -216,12 +214,13 @@ public class ImplementationTest {
 				// Write to text file
 			}
 		}
-		Collections.sort(questions);
+		List<GeneratedQuestion> questions_list = new ArrayList<>(questions);
+		Collections.sort(questions_list);
 		System.out.println("************* Final Questions ***************");
-		for (GeneratedQuestion q : questions) {
+		for (GeneratedQuestion q : questions_list) {
 			System.out.println(q);
 		}
 		System.out.println("Total Number of Sentences: "+sentenceCounter);
-		System.out.println("Total Number of Questions: "+questions.size());
+		System.out.println("Total Number of Questions: "+questions_list.size());
 	}
 }
