@@ -80,7 +80,7 @@ public class SentenceSelection {
 				List<Tree> changedTree = Tsurgeon.processPatternOnTrees(searchPattern, p, sentence.sentenceTree);
 				sentence.sentenceTree = changedTree.get(0);
 			} catch (Exception e) {}
-			//System.out.println("Changed tree: " + sentence.sentenceTree);
+			//// System.out.println("Changed tree: " + sentence.sentenceTree);
 		}
 	}
 }

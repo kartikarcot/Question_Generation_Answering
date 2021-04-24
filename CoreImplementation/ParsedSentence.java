@@ -83,23 +83,23 @@ public class ParsedSentence {
 
     public void print(boolean debugMode) {
         if (!debugMode) return;
-        System.out.println("-------------------------------------------------------");
-        System.out.println(sentenceText);
-        System.out.println("Sentence Tree: "+ sentenceTree);
+        // System.out.println("-------------------------------------------------------");
+        // System.out.println(sentenceText);
+        // System.out.println("Sentence Tree: "+ sentenceTree);
         System.out.print("Tokens:");
         for (String token : sentenceTokens) {
             System.out.print(" " + token);
         }
-        System.out.println();
+        // System.out.println();
         System.out.print("NER Tags:");
         for (String tag : sentenceTags) {
             System.out.print(" " + tag);
         }
-        System.out.println();
-        System.out.println("Tag Maps:");
+        // System.out.println();
+        // System.out.println("Tag Maps:");
         for (Map.Entry<String, String>entry : tagMap.entrySet()) {
-            System.out.println(entry.getKey() + " : " + entry.getValue());
+            // System.out.println(entry.getKey() + " : " + entry.getValue());
         }
-        System.out.println("-------------------------------------------------------");
+        // System.out.println("-------------------------------------------------------");
     }
 }

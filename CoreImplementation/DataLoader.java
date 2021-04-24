@@ -40,7 +40,7 @@ public class DataLoader {
             }
 //            this.content = Files.readString(path, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            System.out.println("Exception caught in DataLoader::Initialize");
+            // System.out.println("Exception caught in DataLoader::Initialize");
             e.printStackTrace();
         }
     }

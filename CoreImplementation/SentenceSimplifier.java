@@ -26,8 +26,8 @@ public class SentenceSimplifier {
 //		leadingAdverbOperation.add("prune leadadv");
 //		leadingAdverbOperation.add("prune leadcomma");
 //		TsurgeonWrapper removeLeadingAdverbs = new TsurgeonWrapper(sentenceCopy, leadingAdverbPattern, leadingAdverbOperation);
-		System.out.println("Initial tree: "+sentenceCopy.toString());
-		System.out.println("Formatted tree: "+removeLeadingAdverbs.resultingTree.toString());
+		// System.out.println("Initial tree: "+sentenceCopy.toString());
+		// System.out.println("Formatted tree: "+removeLeadingAdverbs.resultingTree.toString());
 		return removeLeadingAdverbs.resultingTree;
 	}
 }

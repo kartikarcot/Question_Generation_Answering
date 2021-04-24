@@ -34,7 +34,7 @@ public class PostProcessQuestion {
 			sentenceTreeCopy = changedTree.get(0);
 		}
 		// Remove extraneous modifiers
-		//System.out.println("Post Processed String: " + sentenceTreeCopy.toString());
+		//// System.out.println("Post Processed String: " + sentenceTreeCopy.toString());
 		return sentenceTreeCopy;
 	}
 }

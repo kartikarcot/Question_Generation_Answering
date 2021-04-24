@@ -45,10 +45,10 @@ public class DocumentParser {
 
         // build pipeline
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-        System.out.println("Built Stanford CoreNLP Pipeline.");
+        // System.out.println("Built Stanford CoreNLP Pipeline.");
 
         originalDocument  = new CoreDocument(documentStr);
-        System.out.println("Annotating the document");
+        // System.out.println("Annotating the document");
         pipeline.annotate(originalDocument);
 
         Annotation doc_annotations = originalDocument.annotation();
@@ -60,7 +60,7 @@ public class DocumentParser {
                 continue;
             parsedSentences.add(p);
         }
-        System.out.println("Finished annotating");
+        // System.out.println("Finished annotating");
 
 //        // ToDo: Coreference Resolution
 //        Map<Integer, CorefChain> corefs = doc_annotations.get(CorefCoreAnnotations.CorefChainAnnotation.class);
@@ -85,23 +85,23 @@ public class DocumentParser {
 //                if(corefs.get(ClusterId)!=null){
 //
 //                    CorefChain coref_chain = corefs.get(ClusterId);
-////                    System.out.println("matched chain = " + coref_chain);
+////                    // System.out.println("matched chain = " + coref_chain);
 //                    //Fetch sentence index
 //                    int sentence_idx = coref_chain.getRepresentativeMention().sentNum -1;
 //                    CoreMap corefSentence = doc_annotations.get(CoreAnnotations.SentencesAnnotation.class).get(sentence_idx);
 //
 //                    List<CoreLabel> corefSentenceTokens = corefSentence.get(CoreAnnotations.TokensAnnotation.class);
 //                    CorefChain.CorefMention reprMent = coref_chain.getRepresentativeMention();
-////                    System.out.println("reprMent :"+reprMent);
-////                    System.out.println("Start index "+reprMent.startIndex);
-////                    System.out.println("End Index "+reprMent.endIndex);
+////                    // System.out.println("reprMent :"+reprMent);
+////                    // System.out.println("Start index "+reprMent.startIndex);
+////                    // System.out.println("End Index "+reprMent.endIndex);
 //                    if (token.index() <= reprMent.startIndex || token.index() >= reprMent.endIndex) {
 //
 //                        for (int i = reprMent.startIndex; i < reprMent.endIndex; i++) {
 //                            CoreLabel matchedLabel = corefSentenceTokens.get(i - 1);
 //                            corefResolvedSentence.add(matchedLabel.word().replace("'s", ""));
-////                            System.out.println("matchedLabel : "+matchedLabel.word());
-////                            System.out.println("Token word "+token.word());
+////                            // System.out.println("matchedLabel : "+matchedLabel.word());
+////                            // System.out.println("Token word "+token.word());
 //                        }
 //                    }
 //
@@ -123,21 +123,21 @@ public class DocumentParser {
 //            }
 //            ParsedSentence parsedObj = new ParsedSentence(coreSentence, corefResolvedSentence);
 //            originalParsedSentences.add(parsedObj);
-//            //System.out.println(parsedObj.corefResolvedSentenceText);
+//            //// System.out.println(parsedObj.corefResolvedSentenceText);
 //            corefResolvedSentenceDocument.append(" "+parsedObj.corefResolvedSentenceText);
 //        }
 //
 //     //Added to annotate the coref resolved document
-//        System.out.println(corefResolvedSentenceDocument.toString());
+//        // System.out.println(corefResolvedSentenceDocument.toString());
 //        document  = new CoreDocument(corefResolvedSentenceDocument.toString());
-//        System.out.println("Annotated the coref resolved document");
+//        // System.out.println("Annotated the coref resolved document");
 //        pipeline.annotate(document);
 //
 //        parsedSentences = new ArrayList<>();
 //        for (CoreSentence sentence : document.sentences()) {
 //            parsedSentences.add(new ParsedSentence(sentence));
 //        }
-//        System.out.println("Finished annotating");
+//        // System.out.println("Finished annotating");
 
 
 

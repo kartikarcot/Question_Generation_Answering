@@ -54,9 +54,9 @@ public class GenerateQuestion {
 		answerPhraseExtractMatcher.find();
 
 		Tree phraseToMove = answerPhraseExtractMatcher.getNode("answer");
-		System.out.println("----- Phrase to Move ------");
-		System.out.println(phraseToMove);
-		System.out.println("---------------------------");
+		// System.out.println("----- Phrase to Move ------");
+		// System.out.println(phraseToMove);
+		// System.out.println("---------------------------");
 
 		if (phraseToMove == null) return questionTrees;
 
@@ -64,18 +64,18 @@ public class GenerateQuestion {
 		if (!mainClauseSubject && phraseToMove.value().matches("PP.*")) {
 
 			Label label = phraseToMove.yield().get(0);
-			System.out.println("Label value: " + label.value());
+			// System.out.println("Label value: " + label.value());
 			preposition = phraseToMove.getChild(0);
 			Label childLabel = preposition.label();
 			if (!childLabel.toString().equals("IN")) preposition = null;
-			System.out.println("Preposition: "+preposition);
-			System.out.println("Preposition Label: "+childLabel);
+			// System.out.println("Preposition: "+preposition);
+			// System.out.println("Preposition Label: "+childLabel);
 		}
 
 		// if phraseToMove is not an NP, take it as the first NP child
 		String npLabel = phraseToMove.label().toString();
 		if (!npLabel.contains("NP") && !npLabel.contains("mainclausesub")) {
-			System.out.println("Label: " + phraseToMove.label());
+			// System.out.println("Label: " + phraseToMove.label());
 			String findNPPattern = npLabel + " << NP=toreplace";
 			TregexMatcherWrapper matcher = new TregexMatcherWrapper(findNPPattern, sentenceTreeCopied);
 			if (matcher.matcher.find()) {
@@ -106,11 +106,11 @@ public class GenerateQuestion {
 		// phrase answer
 		List<Label> answerTokensLabel = phraseToMove.yield();
 		List<String> answerTokens = new ArrayList<>();
-		//System.out.println("---- Answer Tokens ----");
+		//// System.out.println("---- Answer Tokens ----");
 		for (Label label: answerTokensLabel) {
 			answerTokens.add(label.value());
 		}
-		//System.out.println("Tag");
+		//// System.out.println("Tag");
 		//List<String> tokens = new ArrayList<>();
 		/*int answerTokenCounter = 0;
 		for (int i = 0; i < sentenceTokens.size(); i++) {
@@ -128,17 +128,17 @@ public class GenerateQuestion {
 			}
 		}*/
 		String finalTag = determineNERtag(answerTokens, tagMap);
-		/*System.out.println("-------- NER Tag ----------");
+		/*// System.out.println("-------- NER Tag ----------");
 		for (String noun : answerTokens) {
 			System.out.print(noun + " ");
 		}
-		System.out.println();
+		// System.out.println();
 		for (String nerT : tags) {
 			System.out.print(nerT + " ");
 		}
-		System.out.println();
-		System.out.println("Final Tag: "+ finalTag);
-		System.out.println("---------------------------");*/
+		// System.out.println();
+		// System.out.println("Final Tag: "+ finalTag);
+		// System.out.println("---------------------------");*/
 
 
 		if (finalTag == null) {
@@ -150,7 +150,7 @@ public class GenerateQuestion {
 		String questionType = determineQuestionType(finalTag);
 		// Question type will return null if the nertag was "0". Don't form questions about this.
 		if (questionType != null) {
-			//System.out.println("Before Question Gen: "+processedSentenceTree);
+			//// System.out.println("Before Question Gen: "+processedSentenceTree);
 
 			// remove useless Subordinate clause
 			RemoveUselessPredicate removeUselessPredicate = new RemoveUselessPredicate(processedSentenceTree);
@@ -167,7 +167,7 @@ public class GenerateQuestion {
 			operations.add(pruneOperation);
 			operations.add(addQuestionType);
 			tsurgeon = new TsurgeonWrapper(newTree, answerPhraseExtractTregex, operations);
-			//System.out.println("After Question Gen: "+newTree);
+			//// System.out.println("After Question Gen: "+newTree);
 			// if preposition exists then add it
 			if (preposition != null) {
 				Tree sqTree = newTree.getChild(0);
@@ -180,7 +180,7 @@ public class GenerateQuestion {
 	}
 
 	private String determineNERtag(List<String> tokens, Map<String, String> tagMap) {
-		System.out.println("Determine NER Tag");
+		// System.out.println("Determine NER Tag");
 
 		// check if pronoun and get ner tag
 		for (String token : tokens) {
@@ -193,7 +193,7 @@ public class GenerateQuestion {
 		for (String token : tokens) {
 			String tag = tagMap.get(token);
 			if (tag == null) continue;
-			System.out.println(token + " : " + tag);
+			// System.out.println(token + " : " + tag);
 			if (!tag.equals("O") && !tag.equals("NATIONALITY")) {
 				if (!tag.matches("DATE|TIME") && tokens.get(0).toLowerCase().matches("in|at"))
 					return "LOCATION";

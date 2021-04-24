@@ -47,10 +47,10 @@ public class ImplementationTest {
 		);
 
 		//MainClauseSubjectVerbConversion thirdPersonForm = new MainClauseSubjectVerbConversion();
-		/*System.out.println("------------------- Third Person Form Test -------------------");
-		System.out.println("is VBZ: "+thirdPersonForm.convertToAppropriateForm("is", "VBZ"));
-		System.out.println("walking VBG: "+thirdPersonForm.convertToAppropriateForm("walking", "VBG"));
-		System.out.println("wanted VBD: "+thirdPersonForm.convertToAppropriateForm("wanted", "VBD"));*/
+		/*// System.out.println("------------------- Third Person Form Test -------------------");
+		// System.out.println("is VBZ: "+thirdPersonForm.convertToAppropriateForm("is", "VBZ"));
+		// System.out.println("walking VBG: "+thirdPersonForm.convertToAppropriateForm("walking", "VBG"));
+		// System.out.println("wanted VBD: "+thirdPersonForm.convertToAppropriateForm("wanted", "VBD"));*/
 
 		// output sentences for a check
 		int sentenceCounter = 0;
@@ -62,7 +62,7 @@ public class ImplementationTest {
 			sentence.print(debug);
 
 			String firstWord = sentence.sentenceTokens.get(0).toLowerCase();
-			System.out.println("First Word: " + firstWord);
+			// System.out.println("First Word: " + firstWord);
 			if (firstWord.equals("there-1") || firstWord.equals("these-1") || firstWord.equals("it-1")
 							|| (firstWord.equals("another-1") && sentence.sentenceTokens.get(1).toLowerCase().equals("example-2"))) {
 				continue;
@@ -76,19 +76,19 @@ public class ImplementationTest {
 			PutAdverbIntoNP putAdverbIntoVP = new PutAdverbIntoNP(removedPhrases);
 			Tree adverbProcessedPhrase = putAdverbIntoVP.resultingTree;
 
-			System.out.println("After ADVP moved");
-			System.out.println(adverbProcessedPhrase);
+			// System.out.println("After ADVP moved");
+			// System.out.println(adverbProcessedPhrase);
 
 			// mark unremovable
 			MarkUnmovable markUnmovable = new MarkUnmovable(adverbProcessedPhrase);
 
 			// main clasue matcher
-			System.out.println("------------------- Main Clause Matcher -----------------");
+			// System.out.println("------------------- Main Clause Matcher -----------------");
 			MainClauseMatcher mainMatcher = new MainClauseMatcher(markUnmovable.resultingTree);
 
-			System.out.println("Subject: " + mainMatcher.resultingSubject);
-			//System.out.println("Verb: "+mainMatcher.resultingVerb+", "+mainMatcher.resultingVerbTag);
-			//System.out.println("Before: "+mainMatcher.resultingTree);
+			// System.out.println("Subject: " + mainMatcher.resultingSubject);
+			//// System.out.println("Verb: "+mainMatcher.resultingVerb+", "+mainMatcher.resultingVerbTag);
+			//// System.out.println("Before: "+mainMatcher.resultingTree);
 			TregexPattern pronounPattern = TregexPattern.compile("ROOT <<, PRP");
 			TregexMatcher pronounMatcher = pronounPattern.matcher(sentence.sentenceTree);
 			Boolean firstWordPronoun = pronounMatcher.find();
@@ -96,11 +96,11 @@ public class ImplementationTest {
 			if (mainMatcher.resultingSubject != null) {
 				Tree labeledTree = MarkUnmovable.removeUnmovable(mainMatcher.resultingTree);
 				List<Tree> questionTrees = new ArrayList<>();
-				System.out.println(mainMatcher.resultingTree.toString());
-				System.out.println("Removed unmovable phrases" + labeledTree.toString());
+				// System.out.println(mainMatcher.resultingTree.toString());
+				// System.out.println("Removed unmovable phrases" + labeledTree.toString());
 				//MainSubjectVerbTense verbTense = new MainSubjectVerbTense(labeledTree, mainMatcher.resultingVerb, mainMatcher.resultingVerbTag);
 				//System.out.print("After: ");
-				//System.out.println(verbTense.resultingTree);
+				//// System.out.println(verbTense.resultingTree);
 
 				// remove leading phrases
 				RemoveLeadingPhrases removeLeadingPhrases = new RemoveLeadingPhrases(labeledTree);
@@ -146,7 +146,7 @@ public class ImplementationTest {
 							Double upper = 25.;
 							Double lower = 0.;
 							score = parse.score() - (Math.random() * (upper - lower)) + lower;
-							System.out.println("Added noise"+score);
+							// System.out.println("Added noise"+score);
 						}
 						else {
 							score = parse.score();
@@ -161,8 +161,8 @@ public class ImplementationTest {
 			if (!firstWordPronoun) {
 				// find the main clause: Example Tregex Usage
 				NounPhraseMatcher nounPhrase = new NounPhraseMatcher(mainMatcher.resultingTree);
-				System.out.println("----------------- Noun Phrase Matcher -------------------");
-				//System.out.println(nounPhrase.treeWithNounPhrasesMarked);
+				// System.out.println("----------------- Noun Phrase Matcher -------------------");
+				//// System.out.println(nounPhrase.treeWithNounPhrasesMarked);
 
 				nounPhrase.treeWithNounPhrasesMarked = MarkUnmovable.removeUnmovable(nounPhrase.treeWithNounPhrasesMarked);
 
@@ -173,9 +173,9 @@ public class ImplementationTest {
 				// generate a question for each marked nounphrase
 				Integer index = 0;
 				for (Tree np : nounPhrase.resultingNodes) {
-					//System.out.println("Noun Phrase: " + np);
+					//// System.out.println("Noun Phrase: " + np);
 					//NodePruner nodePruner = new NodePruner(nounPhrase.treeWithNounPhrasesMarked, np.label().toString());
-					//System.out.println("Sentence with Noun Phrase Removed: " + nodePruner.resultingTree);
+					//// System.out.println("Sentence with Noun Phrase Removed: " + nodePruner.resultingTree);
 
 					Tree decomposedPredicateTree = null;
 					// Decompose predicates
@@ -187,7 +187,7 @@ public class ImplementationTest {
 					//Relabel main clause
 					RelabelMainClause relabelObj = new RelabelMainClause(subAuxInverted);
 					Tree mainClauseRelabeledTree = (relabelObj.sentenceTreeCopy);
-					//System.out.println("Text with relabeled main clause " + mainClauseRelabeledTree.toString());
+					//// System.out.println("Text with relabeled main clause " + mainClauseRelabeledTree.toString());
 
 					// generate question
 					List<Tree> questionTrees = generator.generateQuestions(mainClauseRelabeledTree,
@@ -219,7 +219,7 @@ public class ImplementationTest {
 					//postprocesser.postProcessQuestion(mainClauseRelabeledTree);
 					index++;
 				}
-				System.out.println("--------------------------------------------------------");
+				// System.out.println("--------------------------------------------------------");
 
 
 				// Identify NER type of Noun Phrase
@@ -230,10 +230,12 @@ public class ImplementationTest {
 		}
 		List<GeneratedQuestion> questions_list = new ArrayList<>(questions);
 		Collections.sort(questions_list);
+		Integer count = 0;
 		for (GeneratedQuestion q : questions_list) {
-			System.out.println(q);
+			if (count++ < noQuestions)
+				System.out.println(q.generatedQuestion);
+			else
+				break;
 		}
-		System.out.println("Total Number of Sentences: "+sentenceCounter);
-		System.out.println("Total Number of Questions: "+questions_list.size());
 	}
 }

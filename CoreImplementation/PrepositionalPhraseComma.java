@@ -17,7 +17,7 @@ public class PrepositionalPhraseComma {
         resultingTree = inputTree.deepCopy();
 
         // pattern: Tregex for labelling the nodes
-        //System.out.println("PP Input Tree: "+ resultingTree);
+        //// System.out.println("PP Input Tree: "+ resultingTree);
         String pattern = "SQ|S=toplevel < ((@/PP/=pptobesurrounded !$-/,/) $+ /,/=commaremove )";
 
 
