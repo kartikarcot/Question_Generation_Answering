@@ -55,7 +55,10 @@ public class DocumentParser {
 
         parsedSentences = new ArrayList<>();
         for (CoreSentence sentence : originalDocument.sentences()) {
-            parsedSentences.add(new ParsedSentence(sentence));
+            ParsedSentence p = new ParsedSentence(sentence);
+            if (p.sentenceTree.yield().size() > 35)
+                continue;
+            parsedSentences.add(p);
         }
         System.out.println("Finished annotating");
 

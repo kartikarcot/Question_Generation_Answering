@@ -4,6 +4,7 @@ package CoreImplementation;
 import edu.stanford.nlp.ling.Label;
 import com.sun.tools.javac.Main;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
+import edu.stanford.nlp.simple.Token;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.tregex.TregexMatcher;
 import edu.stanford.nlp.trees.tregex.TregexPattern;
@@ -19,13 +20,10 @@ public class ImplementationTest {
 		// String originalString = "Alvin is a student at CMU University. He is a Master's Student! Alvin wanted to play";
 		//String originalString = "Alvin wanted to play. Alvin is walking his dog. Students need a break. Karthik is sad.";
 		//load the wiki file
-		DataLoader dataLoader = new DataLoader("noun_counting_data/a2.txt");
+		DataLoader dataLoader = new DataLoader(args[0]);
 		String originalString = dataLoader.getText();
-//		String originalString = "Gyrados is a great pokemon. Gyrados is a great pokemon. Gyrados is cool.";
-		//String originalString = "Afterwards, however, Ash is matched against Tobias, a trainer who famously swept all eight Sinnoh League gyms and all other opponents with only his legendary Pokémon Darkrai.";
-		//String originalString = "Taylor enjoyed playing Ash because of his \"low, husky voice\" and \"energy and excitement\".";
-		//System.out.println(originalString);
-		// parse sentence
+		Integer noQuestions = Integer.parseInt(args[1]);
+
 		DocumentParser docParser = new DocumentParser(originalString);
 
 		// filter sentences
@@ -141,7 +139,19 @@ public class ImplementationTest {
 					}
 					Tree parse = lp.parse(question);
 					if (parse.size() >= 5) {
-						GeneratedQuestion newQ = new GeneratedQuestion(question, sentence.sentenceText, answerPhrase, parse.score());
+						List<Label> yield = parse.yield();
+						Double score = 0.;
+						String question_str = yield.stream().map(e -> e.value()).reduce("",(e1,e2)-> e1+" "+e2).strip();
+						if (question_str.matches("What can you say about .*")) {
+							Double upper = 25.;
+							Double lower = 0.;
+							score = parse.score() - (Math.random() * (upper - lower)) + lower;
+							System.out.println("Added noise"+score);
+						}
+						else {
+							score = parse.score();
+						}
+						GeneratedQuestion newQ = new GeneratedQuestion(question, sentence.sentenceText, answerPhrase, score);
 						questions.add(newQ);
 					}
 				}
@@ -220,7 +230,6 @@ public class ImplementationTest {
 		}
 		List<GeneratedQuestion> questions_list = new ArrayList<>(questions);
 		Collections.sort(questions_list);
-		System.out.println("************* Final Questions ***************");
 		for (GeneratedQuestion q : questions_list) {
 			System.out.println(q);
 		}

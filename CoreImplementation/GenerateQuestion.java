@@ -176,51 +176,27 @@ public class GenerateQuestion {
 			questionTrees.add(newTree);
 		}
 		return questionTrees;
-		// extract the noun phrase out of the prepositional phrase
-		/*String extractionTregex = "PP !>> NP ?< RB|ADVP=adverb [< (IN|TO=preposition !$ IN) | < (IN=preposition $ IN=preposition2)] < NP=object";
-		TregexPattern extractionPattern = TregexPattern.compile(extractionTregex);
-		TregexMatcher extractionMatcher = extractionPattern.matcher(phraseToMove);
-		Tree answerNP = phraseToMove;
-		String answerPreposition = "";
-		Tree answerPrepositionModifier = null;
-		if (extractionMatcher.find()) {
-			System.out.println("Noun Phrase Found");
-			answerNP = extractionMatcher.getNode("object");
-			answerPreposition = extractionMatcher.getNode("preposition").yield().toString();
-			Tree answerPreposition2 = extractionMatcher.getNode("preposition2");
-			if (answerPreposition2 != null) {
-				answerPreposition += " " + answerPreposition2.yield().toString();
-			}
-			answerPrepositionModifier = extractionMatcher.getNode("adverb");
-			System.out.println("---- Answer Preposition ----");
-			System.out.println(answerPreposition);
-			System.out.println("----------------------------");
 
-			System.out.println("---- Answer Preposition Modifier ----");
-			System.out.println(answerPrepositionModifier);
-			System.out.println("-------------------------------------");
-		} else {*/
-			// ToDo: check if this is a partitive construction
-			/*String partitiveConstructionTregex = "NP <<# DT|JJ|CD|RB|NN|JJS|JJR=syntactichead < (PP < (IN < of) < (NP <<# NN|NNS|NNP|NNPS=semantichead)) !> NP ";
-			TregexPattern partitiveConstructionPattern = TregexPattern.compile(partitiveConstructionTregex);
-			TregexMatcher partitiveConstructionMatcher = partitiveConstructionPattern.matcher(phraseToMove);
-			if (partitiveConstructionMatcher.find()) {
-					Tree syntacticHead = partitiveConstructionMatcher.getNode("syntactichead");
-					if ()
-			}*/
-		//}
-		// ToDo: identify question type
-		//List<String> questionTypes = identifyQuestionTypes(nerTags, start, end);
-		//return questionTrees;
 	}
 
 	private String determineNERtag(List<String> tokens, Map<String, String> tagMap) {
 		System.out.println("Determine NER Tag");
+
+		// check if pronoun and get ner tag
+		for (String token : tokens) {
+			if (token.toLowerCase().matches("he|her|him|she|his|them|their|they|I|me|my|mine|you|your"))
+				return "PERSON";
+			if (token.toLowerCase().matches("it|its"))
+				return "THING";
+		}
+
 		for (String token : tokens) {
 			String tag = tagMap.get(token);
 			if (tag == null) continue;
 			System.out.println(token + " : " + tag);
 			if (!tag.equals("O") && !tag.equals("NATIONALITY")) {
+				if (!tag.matches("DATE|TIME") && tokens.get(0).toLowerCase().matches("in|at"))
+					return "LOCATION";
 				return tag;
 			}
 		}

@@ -21,11 +21,12 @@ public class ParsedSentence {
 
     public ParsedSentence(CoreSentence sentence) {
         // parse the sentence into a tree
-        sentenceTree = sentence.constituencyParse();
+//        sentenceTree = sentence.constituencyParse();
+
 
         // store all the tokens
         sentenceTokens = new ArrayList<>();
-        List<Label> originalTokenArray = sentenceTree.yield();
+        List<Label> originalTokenArray = sentence.constituencyParse().yield();
         for (int i = 0; i < originalTokenArray.size(); i++) {
             sentenceTokens.add(originalTokenArray.get(i).toString());
         }
@@ -34,13 +35,18 @@ public class ParsedSentence {
         sentenceTags = sentence.nerTags();
 
         // store raw sentence
-        sentenceText = sentence.text();
+//        sentenceText = sentence.text();
 
         // create map
         tagMap = new HashMap<>();
         for (int i = 0; i < sentenceTags.size(); i++) {
             tagMap.put(originalTokenArray.get(i).value(), sentenceTags.get(i));
         }
+
+        // simplify the sentence
+        sentenceTree = SentenceSimplifier.simplify(sentence.constituencyParse());
+        sentenceText =sentenceTree.getLeaves().stream().map(element-> element.value()).reduce("", (e1,e2) -> e1+" "+e2);
+
     }
     public ParsedSentence(CoreSentence sentence, List<String> corefResolvedSentence) {
 
