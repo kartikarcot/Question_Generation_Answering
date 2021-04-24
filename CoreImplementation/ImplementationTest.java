@@ -59,7 +59,7 @@ public class ImplementationTest {
 			if (sentence.sentenceText.contains("\n")) continue;
 			if (sentence.sentenceTokens.size() <= 1) continue;
 			// print sentence
-			sentence.print(debug);
+//			sentence.print(debug);
 
 			String firstWord = sentence.sentenceTokens.get(0).toLowerCase();
 			// System.out.println("First Word: " + firstWord);
