@@ -5,6 +5,7 @@ public class GeneratedQuestion implements Comparable<GeneratedQuestion>{
     public String sourceSentence;
     public String answerPhrase;
     public Double score;
+    public Integer length;
 
     public GeneratedQuestion(String generatedQuestion, String sourceSentence, String answerPhrase, Double score) {
         this.generatedQuestion = generatedQuestion.replaceAll(" *(\\.|\\,|\\?) *", "$1 ");
@@ -13,6 +14,7 @@ public class GeneratedQuestion implements Comparable<GeneratedQuestion>{
         if (this.generatedQuestion.length() > 2)
             this.generatedQuestion = this.generatedQuestion.substring(0,this.generatedQuestion.length()-2)+"?";
         this.generatedQuestion = this.generatedQuestion.replaceAll("(\\,|\"|\\')\\?","?");
+        this.length = this.generatedQuestion.split(" ").length;
         this.sourceSentence = sourceSentence;
         this.answerPhrase = answerPhrase;
         this.score = score;

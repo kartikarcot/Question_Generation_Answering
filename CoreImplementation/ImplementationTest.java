@@ -138,7 +138,7 @@ public class ImplementationTest {
 						answerPhrase += leave.value() + " ";
 					}
 					Tree parse = lp.parse(question);
-					if (parse.size() >= 5) {
+					if (parse.yield().size() >= 5) {
 						List<Label> yield = parse.yield();
 						Double score = 0.;
 						String question_str = yield.stream().map(e -> e.value()).reduce("",(e1,e2)-> e1+" "+e2).strip();
@@ -228,14 +228,36 @@ public class ImplementationTest {
 				// Write to text file
 			}
 		}
-		List<GeneratedQuestion> questions_list = new ArrayList<>(questions);
-		Collections.sort(questions_list);
-		Integer count = 0;
-		for (GeneratedQuestion q : questions_list) {
-			if (count++ < noQuestions)
-				System.out.println(q.generatedQuestion);
-			else
-				break;
+		HashMap<Integer, List<GeneratedQuestion>> hashmapOfQuestions = new HashMap<>();
+		hashmapOfQuestions.put(0, new ArrayList<>());
+		hashmapOfQuestions.put(1, new ArrayList<>());
+		hashmapOfQuestions.put(2, new ArrayList<>());
+		hashmapOfQuestions.put(3, new ArrayList<>());
+		for (GeneratedQuestion q : questions) {
+			Integer bin = q.length / 10;
+			// totally 4 bins
+			if (bin > 3) bin = 3;
+			if (hashmapOfQuestions.containsKey(bin)) {
+				hashmapOfQuestions.get(bin).add(q);
+			}
+			else{
+				hashmapOfQuestions.put(bin, new ArrayList<>());
+				hashmapOfQuestions.get(bin).add(q);
+			}
+		}
+
+		// split the questions as 40% 30% 15% 15%
+		Integer bin_4 = Math.min(hashmapOfQuestions.get(3).size(), (int) Math.round(noQuestions * 0.1));
+		Integer bin_3 = Math.min(hashmapOfQuestions.get(2).size(), (int) Math.round(noQuestions * 0.15));
+		Integer bin_2 = Math.min(hashmapOfQuestions.get(1).size(), (int) Math.round(noQuestions * 0.3));
+		Integer bin_1 = Math.min(hashmapOfQuestions.get(0).size(), Math.max(0, noQuestions - bin_2 - bin_3 - bin_4));
+		List<Integer> noQuestionArray = Arrays.asList(new Integer[]{bin_1, bin_2, bin_3, bin_4});
+		for (int i = 0; i < 4; i++) {
+			List<GeneratedQuestion> bin_questions = hashmapOfQuestions.get(i);
+			Collections.sort(bin_questions);
+			for (int j = 0; j < noQuestionArray.get(i); j++) {
+				System.out.println(bin_questions.get(j).generatedQuestion);
+			}
 		}
 	}
 }
