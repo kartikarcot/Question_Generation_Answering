@@ -7,7 +7,7 @@ import java.util.List;
 
 public class NounPhraseMatcher {
     public static final String PATTERN =
-            "NP=nounphrase";
+            "NP|PP|SBAR=nounphrase";
 
     public Tree treeWithNounPhrasesMarked;
     public List<Tree> resultingNodes;
@@ -32,7 +32,7 @@ public class NounPhraseMatcher {
             Tree node = matcher.matcher.getNode("nounphrase");
 
             // mark the NP's with their indices
-            node.label().setValue(node.label().toString()+Integer.toString(counter++));
+            node.label().setValue(node.label().toString()+(counter++));
 
             resultingNodes.add(node);
         }

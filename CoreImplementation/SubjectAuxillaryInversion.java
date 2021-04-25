@@ -94,7 +94,7 @@ public class SubjectAuxillaryInversion {
 		Tsurgeon.processPatternsOnTree(ops, sentenceTreeCopy);
 
 		// print stuff for debugging
-		System.out.println("Subject auxillary inversion: "+sentenceTreeCopy.toString());
+		//// System.out.println("Subject auxillary inversion: "+sentenceTreeCopy.toString());
 		return sentenceTreeCopy;
 	}
 }

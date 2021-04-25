@@ -48,6 +48,7 @@ public class DecomposePredicate {
 			String tensedVerb = tensedVerbTree.getChild(0).toString();
 			String posTag = tensedVerbTree.label().toString();
 			String lemma = extractLemma(tensedVerb, posTag);
+			// System.out.println(tensedVerb+ " "+ posTag+ ": "+ lemma);
 
 			// if lemma is not be then we can insert auxillary verb
 			List<Pair<TregexPattern, TsurgeonPattern>> ops = new ArrayList<Pair<TregexPattern, TsurgeonPattern>>();
@@ -86,7 +87,7 @@ public class DecomposePredicate {
 				tmpNode.addChild(Tree.valueOf("("+lemma+")"));
 			}
 		}
-		System.out.println("Decomposed Predicate: " + sentenceTreeCopy.toString());
+		//// System.out.println("Decomposed Predicate: " + sentenceTreeCopy.toString());
 		return sentenceTreeCopy;
 	}
 

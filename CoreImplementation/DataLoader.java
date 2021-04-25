@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class DataLoader {
@@ -29,9 +30,17 @@ public class DataLoader {
     public void initialize(String documentPath) {
         Path path = Paths.get(documentPath);
         try {
-            this.content = Files.readString(path, StandardCharsets.UTF_8);
+            List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
+            this.content = "";
+            for (String line : lines) {
+                String[] words = line.split("\\s+");
+                if (words.length >= 4) {
+                    this.content += " " + line;
+                }
+            }
+//            this.content = Files.readString(path, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            System.out.println("Exception caught in DataLoader::Initialize");
+            // System.out.println("Exception caught in DataLoader::Initialize");
             e.printStackTrace();
         }
     }

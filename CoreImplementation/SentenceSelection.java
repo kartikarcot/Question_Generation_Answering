@@ -32,7 +32,9 @@ public class SentenceSelection {
 	 */
 	private static Boolean tregexFilters(ParsedSentence sentence) {
 		String[] tregexTemplates = new String[] {
-						"ROOT=root << SBARQ"
+						"ROOT=root << SBARQ",
+						"ROOT<<,(DT)",
+						"ROOT < (S=mainclause < CC=frontedconj)"
 		};
 		for (String template : tregexTemplates) {
 			TregexPattern questionPattern = TregexPattern.compile(template);
@@ -67,16 +69,18 @@ public class SentenceSelection {
 		String firstTag = sentence.sentenceTags.get(0);
 		String firstToken = sentence.sentenceTokens.get(0);
 		String firstWord = firstToken.split("-")[0];
-		if (firstTag.equals("O"))
+		if (firstTag.equals("O") && !firstWord.equals(firstWord.toLowerCase()))
 		{
 			// fix ner tags array
 			sentence.sentenceTokens.set(0, firstToken.toLowerCase());
 			// fix the tree as well
-			TregexPattern searchPattern = TregexPattern.compile(firstWord+"=renamedtag");
-			TsurgeonPattern p = Tsurgeon.parseOperation("relabel renamedtag "+firstWord.toLowerCase());
-			List<Tree> changedTree = Tsurgeon.processPatternOnTrees(searchPattern, p, sentence.sentenceTree);
-			sentence.sentenceTree = changedTree.get(0);
-			System.out.println("Changed tree: " + sentence.sentenceTree);
+			try {
+				TregexPattern searchPattern = TregexPattern.compile(firstWord + "=renamedtag");
+				TsurgeonPattern p = Tsurgeon.parseOperation("relabel renamedtag " + firstWord.toLowerCase());
+				List<Tree> changedTree = Tsurgeon.processPatternOnTrees(searchPattern, p, sentence.sentenceTree);
+				sentence.sentenceTree = changedTree.get(0);
+			} catch (Exception e) {}
+			//// System.out.println("Changed tree: " + sentence.sentenceTree);
 		}
 	}
 }
