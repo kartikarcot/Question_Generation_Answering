@@ -56,6 +56,7 @@ public class ImplementationTest {
 		int sentenceCounter = 0;
 		for (ParsedSentence sentence : filteredSentences) {
 			sentenceCounter++;
+			if (questions.size() > 20 * noQuestions) break;
 			if (sentence.sentenceText.contains("\n")) continue;
 			if (sentence.sentenceTokens.size() <= 1) continue;
 			// print sentence
@@ -92,6 +93,11 @@ public class ImplementationTest {
 			TregexPattern pronounPattern = TregexPattern.compile("ROOT <<, PRP");
 			TregexMatcher pronounMatcher = pronounPattern.matcher(sentence.sentenceTree);
 			Boolean firstWordPronoun = pronounMatcher.find();
+			if (mainMatcher.resultingSubject != null) {
+				TregexPattern pronounPatternMain = TregexPattern.compile("PRP");
+				TregexMatcher pronounMatcherMain = pronounPatternMain.matcher(mainMatcher.resultingSubject);
+				firstWordPronoun |= pronounMatcherMain.find();
+			}
 
 			if (mainMatcher.resultingSubject != null) {
 				Tree labeledTree = MarkUnmovable.removeUnmovable(mainMatcher.resultingTree);

@@ -35,9 +35,12 @@ public class DocumentParser {
         // set the list of annotators to run
         //props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,depparse,coref,kbp,quote");
 
-         props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse");
+        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse");
         props.setProperty("ner.combinationMode", "HIGH_RECALL");
+        props.setProperty("ner.maxlen", "35");
+        props.setProperty("pos.maxlen", "35");
         props.setProperty("parse.maxlen", "35");
+        props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");
 
         // build pipeline
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
