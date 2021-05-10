@@ -12,6 +12,7 @@ public class RemoveLeadingPhrases {
         resultingTree = sentenceTree.deepCopy();
 
         // pattern: Tregex for labelling the nodes
+        // Reference: Heilman's work: http://www.cs.cmu.edu/~ark/mheilman/questions/
         String pattern = "(/,/=commaToDelete $- (PP|ADVP|ADJP=ppToDelete [!<< NP])) !$-- NP";
 
         // operation: Tsurgeon command for operating on the labelled tree

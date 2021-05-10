@@ -5,6 +5,7 @@ import edu.stanford.nlp.trees.tregex.TregexMatcher;
 import edu.stanford.nlp.trees.tregex.TregexPattern;
 
 public class MarkUnmovable {
+    // Idea inspired by Heilman's work: http://www.cs.cmu.edu/~ark/mheilman/questions/
     String[] unmovablePhrases = new String[] {
             "ROOT=root << (PP $+ PP=unmovable)",
             "ROOT=root << (PP=unmovable $+ UNMOVABLE-PP)",

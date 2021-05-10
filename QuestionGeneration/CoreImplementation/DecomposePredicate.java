@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+// Reference: Heilman's work: http://www.cs.cmu.edu/~ark/mheilman/questions/
 public class DecomposePredicate {
 	/*
 	This rule tries to match two types of sentences-

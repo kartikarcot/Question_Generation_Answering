@@ -11,6 +11,7 @@ import java.util.List;
 
 public class SubjectAuxillaryInversion {
 
+	// Reference: Heilman's work: http://www.cs.cmu.edu/~ark/mheilman/questions/
 	private List<Pair<TregexPattern, TsurgeonPattern>> copulaTsurgeonOperations;
 	private List<Pair<TregexPattern, TsurgeonPattern>> auxTsurgeonOperations;
 

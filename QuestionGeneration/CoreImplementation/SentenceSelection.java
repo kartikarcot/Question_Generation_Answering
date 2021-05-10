@@ -34,7 +34,7 @@ public class SentenceSelection {
 		String[] tregexTemplates = new String[] {
 						"ROOT=root << SBARQ",
 						"ROOT<<,(DT)",
-						"ROOT < (S=mainclause < CC=frontedconj)"
+						"ROOT < (S=mainclause < CC)"
 		};
 		for (String template : tregexTemplates) {
 			TregexPattern questionPattern = TregexPattern.compile(template);
