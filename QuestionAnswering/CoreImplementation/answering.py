@@ -1,4 +1,14 @@
 #Author: Rohan Joshi
+#References:
+
+#https://arxiv.org/pdf/1901.08634.pdf
+#https://huggingface.co/transformers/model_doc/bert.html#tfbertforquestionanswering
+#https://huggingface.co/transformers/custom_datasets.html#question-answering-with-squad-2-0
+#https://mccormickml.com/2020/03/10/question-answering-with-a-fine-tuned-BERT/
+#https://towardsdatascience.com/bert-nlp-how-to-build-a-question-answering-bot-98b1d1594d7b
+#https://medium.com/saarthi-ai/build-a-smart-question-answering-system-with-fine-tuned-bert-b586e4cfa5f5
+
+
 import torch
 import transformers
 from transformers import BertForQuestionAnswering, DistilBertTokenizerFast
