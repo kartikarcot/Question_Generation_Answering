@@ -1,13 +1,13 @@
 
 from pycorenlp import StanfordCoreNLP
-#import stanza
-#from stanza.server import CoreNLPClient
 from nltk.tree import Tree
 import copy
 import requests
 import json
 import os
 
+#Reference for pycorenlp: https://github.com/smilli/py-corenlp
+#https://stanfordnlp.github.io/stanfordnlp/corenlp_client.html
 
 
 class classifyQuestion():
@@ -17,11 +17,8 @@ class classifyQuestion():
         self.url = 'http://localhost:9000/'
 	    
 
-
-
-
-
     #Recursive method to determine clause phrase
+    #Reference to understand how nltk.tree works: https://www.nltk.org/_modules/nltk/tree.html
     def checkConstituency(self, tree):
         if(len(tree)==0):
             return "None"
@@ -44,7 +41,8 @@ class classifyQuestion():
 
         r = requests.post(self.url, data=text.encode('utf-8'), params=self.params, timeout=150000000)
         data = json.loads(r.text)
-        #print(data["sentences"][0]["parse"])
+
+        #Reference: https://stackoverflow.com/questions/28674417/how-to-read-constituency-based-parse-tree/28674667#28674667
         constituency_parse = Tree.fromstring(data["sentences"][0]["parse"])
         temp = copy.deepcopy(constituency_parse)
         result.append(self.checkConstituency(temp))
