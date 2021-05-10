@@ -24,12 +24,19 @@ hs_err_pid*
 
 # nlp toolkit
 */stanford-corenlp-4.2.0/*
-*/stanford-tregex-2020-11-17/*
+stanford-tregex-2020-11-17/*
 
 # intellij files
+.idea/*
 */.idea/*
 */*.iml
 
 # build files
 */out/*
 noun_counting_data/*
+*/*/__pycache__/*
+
+# media
+media/*
+QuestionGeneration/out_test/*
+QuestionAnswering/CoreImplementation/full_bert_ft/pytorch_model.bin
